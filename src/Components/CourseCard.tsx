@@ -50,6 +50,7 @@ export default function CourseCard({ course }: CourseCardProps) {
             <FiUser className="text-blue-500" />
             <span>{course.instructor}</span>
           </div>
+          
 
           {/* রেটিং ও রিভিউ */}
           <div className="flex items-center gap-1 text-amber-500 text-sm font-semibold">
