@@ -29,6 +29,7 @@ export default function NotFound() {
             Sorry, we couldn’t find the page you’re looking for. It might have been moved, deleted, or perhaps the URL contains a typo.
           </p>
         </div>
+        
 
         {/* Action Controls */}
         <div className="pt-6 flex flex-col sm:flex-row items-center justify-center gap-3">
