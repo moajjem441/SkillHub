@@ -1,6 +1,7 @@
 import Banner from "@/Components/Banner";
 import CategoryCard from "@/Components/CategoryCard";
 import FeaturedCourses from "@/Components/FeaturedCourses";
+import Statistics from "@/Components/Statistics";
 
 
 export default function Home() {
@@ -13,6 +14,8 @@ export default function Home() {
       <CategoryCard />
 
      <FeaturedCourses />
+
+     <Statistics />
     </main>
   );
 }
