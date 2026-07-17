@@ -19,7 +19,7 @@ export default function Navbar() {
   ];
 
   return (
-    <nav className="sticky top-0 z-50 w-full border-b border-divider bg-background/70 backdrop-blur-lg">
+    <nav className="sticky top-0 z-50 w-full border-b border-slate-700/60 bg-slate-900/80 backdrop-blur-xl">
       {/* Main Container Header */}
       <header className="mx-auto flex h-16 max-w-7xl items-center justify-between px-4 sm:px-6 lg:px-8">
         
@@ -28,17 +28,17 @@ export default function Navbar() {
           {/* Mobile Hamburger Menu Toggle */}
           <button
             onClick={() => setIsMenuOpen(!isMenuOpen)}
-            className="inline-flex items-center justify-center p-2 rounded-lg text-foreground-500 hover:text-foreground sm:hidden focus:outline-none"
+            className="inline-flex items-center justify-center p-2 rounded-lg text-slate-400 hover:text-slate-100 sm:hidden focus:outline-none transition-colors"
             aria-label="Toggle Menu"
           >
             {isMenuOpen ? <FiX size={24} /> : <FiMenu size={24} />}
           </button>
 
-          <NextLink href="/" className="flex items-center gap-2 font-bold text-xl text-foreground group">
-            <div className="bg-primary/10 p-1.5 rounded-xl text-primary transition-transform group-hover:scale-105">
+          <NextLink href="/" className="flex items-center gap-2 font-bold text-xl text-white group">
+            <div className="bg-blue-500/20 p-1.5 rounded-xl text-blue-400 transition-transform group-hover:scale-105">
               <FiBookOpen size={22} />
             </div>
-            <span>Skill<span className="text-primary">Hub</span></span>
+            <span>Skill<span className="text-blue-400">Hub</span></span>
           </NextLink>
         </div>
 
@@ -53,8 +53,8 @@ export default function Navbar() {
                   href={item.href}
                   className={`text-sm font-medium transition-colors ${
                     isActive 
-                      ? "text-primary font-semibold" 
-                      : "text-foreground-500 hover:text-primary"
+                      ? "text-blue-400 font-semibold" 
+                      : "text-slate-400 hover:text-white"
                   }`}
                 >
                   {item.label}
@@ -72,7 +72,7 @@ export default function Navbar() {
             variant="light"
             radius="full"
             aria-label="Search courses"
-            className="text-foreground-500 hover:text-foreground"
+            className="text-slate-400 hover:text-white transition-colors"
           >
             <FiSearch size={20} />
           </Button>
@@ -83,7 +83,7 @@ export default function Navbar() {
             href="/login"
             variant="light"
             radius="xl"
-            className="hidden sm:inline-flex text-sm font-medium text-foreground"
+            className="hidden sm:inline-flex text-sm font-medium text-slate-300 hover:text-white transition-colors"
           >
             Login
           </Button>
@@ -95,7 +95,7 @@ export default function Navbar() {
             color="primary"
             variant="solid"
             radius="xl"
-            className="text-sm font-semibold shadow-sm"
+            className="text-sm font-semibold shadow-lg shadow-blue-500/30 bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-500 hover:to-indigo-500 text-white border-none transition-all"
           >
             Register
           </Button>
@@ -104,7 +104,7 @@ export default function Navbar() {
 
       {/* --- MOBILE DRAWDOWN / MENU OVERLAY --- */}
       {isMenuOpen && (
-        <div className="sm:hidden border-t border-divider bg-background px-4 py-4 space-y-3 animate-in fade-in slide-in-from-top-2 duration-200">
+        <div className="sm:hidden border-t border-slate-700/60 bg-slate-900/90 backdrop-blur-xl px-4 py-4 space-y-3 animate-in fade-in slide-in-from-top-2 duration-200">
           <ul className="space-y-2">
             {navItems.map((item) => {
               const isActive = pathname === item.href;
@@ -115,7 +115,7 @@ export default function Navbar() {
                     href={item.href}
                     onClick={() => setIsMenuOpen(false)}
                     className={`block w-full py-2 text-base font-medium transition-colors ${
-                      isActive ? "text-primary font-semibold" : "text-foreground-500"
+                      isActive ? "text-blue-400 font-semibold" : "text-slate-400 hover:text-white"
                     }`}
                   >
                     {item.label}
@@ -126,16 +126,26 @@ export default function Navbar() {
           </ul>
           
           {/* Mobile Auth Secondary Partition */}
-          <div className="pt-4 border-t border-divider flex flex-col gap-2">
+          <div className="pt-4 border-t border-slate-700/60 flex flex-col gap-2">
             <Button
               as={NextLink}
               href="/login"
               variant="flat"
               radius="xl"
-              className="w-full font-medium"
+              className="w-full font-medium text-slate-300 border border-slate-700/60 bg-slate-800/60 hover:bg-slate-700/60 transition-colors"
               onClick={() => setIsMenuOpen(false)}
             >
               Login
+            </Button>
+            <Button
+              as={NextLink}
+              href="/register"
+              color="primary"
+              radius="xl"
+              className="w-full font-medium bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-500 hover:to-indigo-500 text-white border-none shadow-lg shadow-blue-500/30 transition-all"
+              onClick={() => setIsMenuOpen(false)}
+            >
+              Register
             </Button>
           </div>
         </div>

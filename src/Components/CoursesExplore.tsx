@@ -18,7 +18,7 @@ export interface Course {
 const ITEMS_PER_PAGE = 4;
 
 export default function CoursesExplore() {
-  // 2. Localized Dataset inside the component itself
+  // 2. Localized Dataset
   const internalCourses: Course[] = [
     {
       id: "c-1",
@@ -123,7 +123,6 @@ export default function CoursesExplore() {
     setCurrentPage(1);
   };
 
-  // --- Filtering Rules Core Engine ---
   const filteredAndSortedCourses = useMemo(() => {
     let result = [...internalCourses];
 
@@ -168,15 +167,15 @@ export default function CoursesExplore() {
   };
 
   return (
-    <div className="w-full bg-transparent text-slate-800 dark:text-slate-100 py-12 px-4">
+    <div className="w-full bg-transparent text-slate-100 py-12 px-4">
       <div className="max-w-7xl mx-auto space-y-10">
         
         {/* Title Elements */}
         <div className="text-center space-y-2 max-w-xl mx-auto mb-6">
-          <span className="text-xs font-bold uppercase tracking-widest text-blue-600 dark:text-blue-400 bg-blue-50 dark:bg-blue-950/40 px-3 py-1 rounded-full border border-blue-200/25">
+          <span className="text-xs font-bold uppercase tracking-widest text-blue-400 bg-blue-500/10 px-3 py-1 rounded-full border border-blue-500/20">
             Course Catalog
           </span>
-          <h2 className="text-3xl font-extrabold tracking-tight text-slate-800 dark:text-slate-100 sm:text-4xl">
+          <h2 className="text-3xl font-extrabold tracking-tight text-white sm:text-4xl">
             Filter & Find Your Perfect Path
           </h2>
         </div>
@@ -185,15 +184,15 @@ export default function CoursesExplore() {
         <div className="grid grid-cols-1 lg:grid-cols-4 gap-8 items-start w-full">
           
           {/* Filtering Control Bar Side Drawer */}
-          <aside className="w-full bg-white dark:bg-slate-900 border border-slate-200/60 dark:border-slate-800 p-6 rounded-2xl shadow-sm space-y-6 lg:sticky lg:top-6">
-            <div className="flex items-center justify-between border-b border-slate-100 dark:border-slate-800 pb-3">
-              <span className="flex items-center gap-2 font-bold text-sm tracking-wide uppercase text-slate-900 dark:text-slate-200">
-                <FiSliders className="text-blue-500" /> Filter Blueprint
+          <aside className="w-full bg-slate-900/80 backdrop-blur-xl border border-slate-700/60 p-6 rounded-2xl shadow-2xl shadow-black/40 space-y-6 lg:sticky lg:top-6">
+            <div className="flex items-center justify-between border-b border-slate-700/60 pb-3">
+              <span className="flex items-center gap-2 font-bold text-sm tracking-wide uppercase text-slate-200">
+                <FiSliders className="text-blue-400" /> Filter Blueprint
               </span>
               <button
                 type="button"
                 onClick={handleResetFilters}
-                className="text-xs font-semibold text-blue-600 dark:text-blue-400 hover:underline flex items-center gap-1 cursor-pointer"
+                className="text-xs font-semibold text-blue-400 hover:text-blue-300 hover:underline flex items-center gap-1 cursor-pointer transition-colors"
               >
                 <FiRefreshCw size={12} /> Reset All
               </button>
@@ -201,11 +200,11 @@ export default function CoursesExplore() {
 
             {/* Input Element */}
             <div className="space-y-2">
-              <label className="text-xs font-bold uppercase tracking-wider text-slate-400 dark:text-slate-500 block text-left">
+              <label className="text-xs font-bold uppercase tracking-wider text-slate-400 block text-left">
                 Search Catalog
               </label>
               <div className="relative w-full group">
-                <div className="absolute inset-y-0 left-3.5 flex items-center pointer-events-none text-slate-400 group-focus-within:text-blue-500 transition-colors">
+                <div className="absolute inset-y-0 left-3.5 flex items-center pointer-events-none text-slate-500 group-focus-within:text-blue-400 transition-colors">
                   <FiSearch size={16} />
                 </div>
                 <input
@@ -216,14 +215,14 @@ export default function CoursesExplore() {
                     setCurrentPage(1);
                   }}
                   placeholder="Titles, instructors..."
-                  className="w-full pl-10 pr-4 py-2.5 bg-slate-50 dark:bg-slate-950 border border-slate-200 dark:border-slate-800 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500/50 transition-all text-slate-900 dark:text-slate-100"
+                  className="w-full pl-10 pr-4 py-2.5 bg-slate-800/60 backdrop-blur-sm border border-slate-700/70 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500/50 transition-all text-slate-100 placeholder-slate-500"
                 />
               </div>
             </div>
 
             {/* Category Filter Element */}
             <div className="space-y-2">
-              <label className="text-xs font-bold uppercase tracking-wider text-slate-400 dark:text-slate-500 block text-left">
+              <label className="text-xs font-bold uppercase tracking-wider text-slate-400 block text-left">
                 Course Category
               </label>
               <div className="flex flex-col gap-1.5">
@@ -234,8 +233,8 @@ export default function CoursesExplore() {
                     onClick={() => handleCategoryChange(cat)}
                     className={`w-full text-left px-3 py-2 text-xs sm:text-sm rounded-xl font-medium transition-all cursor-pointer ${
                       selectedCategory === cat
-                        ? "bg-blue-500 text-white font-bold shadow-sm shadow-blue-500/20"
-                        : "bg-transparent text-slate-600 dark:text-slate-400 hover:bg-slate-100 dark:hover:bg-slate-800/50"
+                        ? "bg-gradient-to-r from-blue-600 to-indigo-600 text-white font-bold shadow-lg shadow-blue-500/30"
+                        : "bg-transparent text-slate-400 hover:bg-slate-800/50 hover:text-slate-200"
                     }`}
                   >
                     {cat}
@@ -247,8 +246,8 @@ export default function CoursesExplore() {
             {/* Price Slider Module */}
             <div className="space-y-2">
               <div className="flex justify-between items-center text-xs font-bold uppercase tracking-wider">
-                <span className="text-slate-400 dark:text-slate-500">Max Budget</span>
-                <span className="text-blue-600 dark:text-blue-400 font-black">${maxPrice}</span>
+                <span className="text-slate-400">Max Budget</span>
+                <span className="text-blue-400 font-black">${maxPrice}</span>
               </div>
               <input
                 type="range"
@@ -260,9 +259,9 @@ export default function CoursesExplore() {
                   setMaxPrice(Number(e.target.value));
                   setCurrentPage(1);
                 }}
-                className="w-full accent-blue-500 h-1.5 bg-slate-100 dark:bg-slate-800 rounded-lg appearance-none cursor-pointer"
+                className="w-full accent-blue-500 h-1.5 bg-slate-700 rounded-lg appearance-none cursor-pointer"
               />
-              <div className="flex justify-between text-[10px] text-slate-400 font-bold">
+              <div className="flex justify-between text-[10px] text-slate-500 font-bold">
                 <span>$40</span>
                 <span>$120</span>
                 <span>$200</span>
@@ -272,9 +271,9 @@ export default function CoursesExplore() {
 
           {/* RIGHT PANEL: Dynamic Sort Header + Card Render System */}
           <main className="lg:col-span-3 space-y-6 w-full">
-            <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 bg-white dark:bg-slate-900 border border-slate-200/60 dark:border-slate-800 px-5 py-4 rounded-2xl shadow-sm w-full">
-              <p className="text-xs sm:text-sm font-medium text-slate-500">
-                Showing <span className="font-bold text-slate-800 dark:text-slate-200">{filteredAndSortedCourses.length}</span> programs found
+            <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 bg-slate-900/80 backdrop-blur-xl border border-slate-700/60 px-5 py-4 rounded-2xl shadow-2xl shadow-black/40 w-full">
+              <p className="text-xs sm:text-sm font-medium text-slate-400">
+                Showing <span className="font-bold text-white">{filteredAndSortedCourses.length}</span> programs found
               </p>
               
               <div className="flex items-center gap-2 self-stretch sm:self-auto justify-between">
@@ -288,7 +287,7 @@ export default function CoursesExplore() {
                     setSortBy(e.target.value);
                     setCurrentPage(1);
                   }}
-                  className="bg-slate-50 dark:bg-slate-950 border border-slate-200 dark:border-slate-800 px-3 py-1.5 text-xs sm:text-sm rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-500/20 text-slate-800 dark:text-slate-200 font-medium cursor-pointer"
+                  className="bg-slate-800/60 backdrop-blur-sm border border-slate-700/70 px-3 py-1.5 text-xs sm:text-sm rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-500/20 text-slate-200 font-medium cursor-pointer"
                 >
                   <option value="featured">Featured Setup</option>
                   <option value="price-low">Price: Low to High</option>
@@ -313,9 +312,9 @@ export default function CoursesExplore() {
                   ))}
                 </div>
               ) : (
-                <div className="w-full text-center py-20 border border-dashed border-slate-200 dark:border-slate-800 rounded-3xl bg-white/40 dark:bg-slate-900/10 backdrop-blur-sm space-y-3">
-                  <div className="text-slate-300 dark:text-slate-700 font-bold text-5xl">ⓘ</div>
-                  <h3 className="text-lg font-bold text-slate-800 dark:text-slate-200">No matching programs found</h3>
+                <div className="w-full text-center py-20 border border-dashed border-slate-700/60 rounded-3xl bg-slate-900/40 backdrop-blur-sm space-y-3">
+                  <div className="text-slate-600 font-bold text-5xl">ⓘ</div>
+                  <h3 className="text-lg font-bold text-slate-200">No matching programs found</h3>
                   <p className="text-xs sm:text-sm text-slate-400 max-w-xs mx-auto">
                     Try modifying your search query or expanding your max price filter range.
                   </p>
@@ -325,25 +324,25 @@ export default function CoursesExplore() {
 
             {/* Pagination Component Toggles */}
             {!isLoading && totalPages > 1 && (
-              <div className="flex items-center justify-between border-t border-slate-200 dark:border-slate-800 pt-6 w-full">
+              <div className="flex items-center justify-between border-t border-slate-700/60 pt-6 w-full">
                 <button
                   type="button"
                   disabled={currentPage === 1}
                   onClick={() => setCurrentPage((prev) => Math.max(prev - 1, 1))}
-                  className="px-4 py-2 border border-slate-200 dark:border-slate-800 text-xs font-bold rounded-xl bg-white dark:bg-slate-900 text-slate-700 dark:text-slate-300 disabled:opacity-40 disabled:cursor-not-allowed hover:bg-slate-50 dark:hover:bg-slate-850/60 transition-colors flex items-center gap-1.5 cursor-pointer"
+                  className="px-4 py-2 border border-slate-700/60 text-xs font-bold rounded-xl bg-slate-900/80 backdrop-blur-sm text-slate-300 disabled:opacity-40 disabled:cursor-not-allowed hover:bg-slate-800/80 transition-colors flex items-center gap-1.5 cursor-pointer"
                 >
                   <FiChevronLeft size={14} /> Previous
                 </button>
                 
-                <span className="text-xs sm:text-sm font-semibold text-slate-500">
-                  Page <span className="font-bold text-slate-800 dark:text-slate-200">{currentPage}</span> of {totalPages}
+                <span className="text-xs sm:text-sm font-semibold text-slate-400">
+                  Page <span className="font-bold text-white">{currentPage}</span> of {totalPages}
                 </span>
 
                 <button
                   type="button"
                   disabled={currentPage === totalPages}
                   onClick={() => setCurrentPage((prev) => Math.min(prev + 1, totalPages))}
-                  className="px-4 py-2 border border-slate-200 dark:border-slate-800 text-xs font-bold rounded-xl bg-white dark:bg-slate-900 text-slate-700 dark:text-slate-300 disabled:opacity-40 disabled:cursor-not-allowed hover:bg-slate-50 dark:hover:bg-slate-850/60 transition-colors flex items-center gap-1.5 cursor-pointer"
+                  className="px-4 py-2 border border-slate-700/60 text-xs font-bold rounded-xl bg-slate-900/80 backdrop-blur-sm text-slate-300 disabled:opacity-40 disabled:cursor-not-allowed hover:bg-slate-800/80 transition-colors flex items-center gap-1.5 cursor-pointer"
                 >
                   Next <FiChevronRight size={14} />
                 </button>
@@ -359,39 +358,46 @@ export default function CoursesExplore() {
 // Reusable Presentation Layer
 function CourseCatalogCard({ course }: { course: Course }) {
   return (
-    <div className="w-full border border-slate-200/60 dark:border-slate-800 hover:border-blue-500/40 bg-white/70 dark:bg-slate-900/40 backdrop-blur-sm shadow-sm hover:shadow-xl transition-all duration-300 hover:-translate-y-1.5 group rounded-2xl overflow-hidden flex flex-col justify-between text-left cursor-pointer">
-      <div className="relative w-full h-44 overflow-hidden bg-slate-100 dark:bg-slate-800">
+    <div className="w-full border border-slate-700/60 hover:border-blue-500/50 bg-slate-900/80 backdrop-blur-xl shadow-xl shadow-black/40 hover:shadow-2xl hover:shadow-blue-500/10 transition-all duration-300 hover:-translate-y-1.5 group rounded-2xl overflow-hidden flex flex-col justify-between text-left cursor-pointer">
+      <div className="relative w-full h-44 overflow-hidden bg-slate-800">
         <img src={course.imageUrl} alt={course.title} className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-105" loading="lazy" />
-        <span className="absolute top-3 left-3 text-[9px] font-extrabold uppercase tracking-widest bg-white/90 dark:bg-slate-900/90 backdrop-blur-md text-blue-600 dark:text-blue-400 px-2.5 py-1 rounded-full border border-slate-200/50 dark:border-slate-700/80">
+        <span className="absolute top-3 left-3 text-[9px] font-extrabold uppercase tracking-widest bg-slate-900/90 backdrop-blur-md text-blue-400 px-2.5 py-1 rounded-full border border-slate-700/80">
           {course.category}
         </span>
-        <span className={`absolute top-3 right-3 text-[9px] font-extrabold uppercase tracking-widest px-2.5 py-1 rounded-full border ${course.level === "Advanced" ? "bg-purple-500/10 text-purple-600 dark:text-purple-400 border-purple-500/20" : "bg-emerald-500/10 text-emerald-600 dark:text-emerald-400 border-emerald-500/20"}`}>
+        <span className={`absolute top-3 right-3 text-[9px] font-extrabold uppercase tracking-widest px-2.5 py-1 rounded-full border ${
+          course.level === "Advanced" 
+            ? "bg-purple-500/20 text-purple-400 border-purple-500/30" 
+            : "bg-emerald-500/20 text-emerald-400 border-emerald-500/30"
+        }`}>
           {course.level}
         </span>
       </div>
 
       <div className="p-5 space-y-4 w-full flex-grow flex flex-col justify-between">
         <div className="space-y-2 w-full">
-          <h3 className="text-base font-bold text-slate-800 dark:text-slate-100 tracking-tight line-clamp-2 min-h-[48px] group-hover:text-blue-600 dark:group-hover:text-blue-400 transition-colors duration-200">
+          <h3 className="text-base font-bold text-white tracking-tight line-clamp-2 min-h-[48px] group-hover:text-blue-400 transition-colors duration-200">
             {course.title}
           </h3>
-          <div className="flex items-center gap-1.5 text-xs text-slate-500 dark:text-slate-400">
-            <FiUser className="text-blue-500" />
+          <div className="flex items-center gap-1.5 text-xs text-slate-400">
+            <FiUser className="text-blue-400" />
             <span>{course.instructor}</span>
           </div>
-          <div className="flex items-center gap-1 text-amber-500 text-sm font-semibold">
+          <div className="flex items-center gap-1 text-amber-400 text-sm font-semibold">
             <FiStar className="fill-current" />
             <span>{course.rating.toFixed(1)}</span>
-            <span className="text-xs text-slate-400 dark:text-slate-500 font-normal">(120+ reviews)</span>
+            <span className="text-xs text-slate-500 font-normal">(120+ reviews)</span>
           </div>
         </div>
 
-        <div className="pt-3 border-t border-slate-100 dark:border-slate-800 flex items-center justify-between w-full">
+        <div className="pt-3 border-t border-slate-700/60 flex items-center justify-between w-full">
           <div>
-            <span className="text-[9px] uppercase tracking-wider text-slate-400 dark:text-slate-500 block font-bold">Total Fee</span>
-            <span className="text-lg font-black text-slate-800 dark:text-slate-100">${course.price}</span>
+            <span className="text-[9px] uppercase tracking-wider text-slate-500 block font-bold">Total Fee</span>
+            <span className="text-lg font-black text-white">${course.price}</span>
           </div>
-          <button type="button" className="text-xs font-bold px-4 py-2 bg-blue-50 dark:bg-blue-950/40 text-blue-600 dark:text-blue-400 rounded-xl hover:bg-blue-600 hover:text-white dark:hover:bg-blue-600 dark:hover:text-white transition-all duration-300 cursor-pointer">
+          <button 
+            type="button" 
+            className="text-xs font-bold px-4 py-2 bg-blue-500/20 text-blue-400 rounded-xl hover:bg-gradient-to-r hover:from-blue-600 hover:to-indigo-600 hover:text-white transition-all duration-300 cursor-pointer border border-blue-500/30 hover:border-transparent"
+          >
             View Details
           </button>
         </div>
@@ -403,20 +409,20 @@ function CourseCatalogCard({ course }: { course: Course }) {
 // Skeleton Component Layer
 function CourseCatalogCardSkeleton() {
   return (
-    <div className="w-full border border-slate-200/50 dark:border-slate-800/80 bg-white/40 dark:bg-slate-900/30 rounded-2xl overflow-hidden flex flex-col items-start animate-pulse">
-      <div className="w-full h-44 bg-slate-200 dark:bg-slate-800"></div>
+    <div className="w-full border border-slate-700/60 bg-slate-900/60 backdrop-blur-sm rounded-2xl overflow-hidden flex flex-col items-start animate-pulse">
+      <div className="w-full h-44 bg-slate-800/80"></div>
       <div className="p-5 space-y-5 w-full">
         <div className="space-y-3">
-          <div className="h-4 bg-slate-200 dark:bg-slate-800 rounded-lg w-5/6"></div>
-          <div className="h-4 bg-slate-200 dark:bg-slate-800 rounded-lg w-2/3"></div>
-          <div className="h-3 bg-slate-100 dark:bg-slate-850 rounded-lg w-1/3 mt-2"></div>
+          <div className="h-4 bg-slate-800/80 rounded-lg w-5/6"></div>
+          <div className="h-4 bg-slate-800/80 rounded-lg w-2/3"></div>
+          <div className="h-3 bg-slate-800/50 rounded-lg w-1/3 mt-2"></div>
         </div>
-        <div className="pt-4 border-t border-slate-100 dark:border-slate-800/80 flex justify-between items-center w-full">
+        <div className="pt-4 border-t border-slate-700/60 flex justify-between items-center w-full">
           <div className="space-y-2">
-            <div className="h-2 bg-slate-100 dark:bg-slate-850 rounded w-8"></div>
-            <div className="h-4 bg-slate-200 dark:bg-slate-800 rounded-lg w-12"></div>
+            <div className="h-2 bg-slate-800/50 rounded w-8"></div>
+            <div className="h-4 bg-slate-800/80 rounded-lg w-12"></div>
           </div>
-          <div className="h-8 bg-slate-200 dark:bg-slate-800 rounded-xl w-24"></div>
+          <div className="h-8 bg-slate-800/80 rounded-xl w-24"></div>
         </div>
       </div>
     </div>

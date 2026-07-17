@@ -7,6 +7,7 @@ import FeaturedCourses from "@/Components/FeaturedCourses";
 import Newsletter from "@/Components/Newsletter";
 import Statistics from "@/Components/Statistics";
 import Testimonials from "@/Components/Testimonials";
+import ViewCourses from "@/Components/ViewCourses";
 
 
 export default function Home() {
@@ -31,6 +32,8 @@ export default function Home() {
     <CallToAction></CallToAction>
 
     <CoursesExplore></CoursesExplore>
+
+    <ViewCourses></ViewCourses>
 
     </main>
   );
