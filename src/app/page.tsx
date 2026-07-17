@@ -1,7 +1,11 @@
 import Banner from "@/Components/Banner";
+import CallToAction from "@/Components/CallToAction";
 import CategoryCard from "@/Components/CategoryCard";
+import Faq from "@/Components/Faq";
 import FeaturedCourses from "@/Components/FeaturedCourses";
+import Newsletter from "@/Components/Newsletter";
 import Statistics from "@/Components/Statistics";
+import Testimonials from "@/Components/Testimonials";
 
 
 export default function Home() {
@@ -16,6 +20,15 @@ export default function Home() {
      <FeaturedCourses />
 
      <Statistics />
+
+     <Testimonials />
+
+     <Faq></Faq>
+
+    <Newsletter></Newsletter>
+
+    <CallToAction></CallToAction>
+
     </main>
   );
 }
