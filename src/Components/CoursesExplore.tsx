@@ -3,7 +3,7 @@
 import React, { useState, useEffect, useMemo } from "react";
 import { FiSearch, FiStar, FiUser, FiSliders, FiChevronLeft, FiChevronRight, FiRefreshCw } from "react-icons/fi";
 
-// 1. TypeScript Contracts exported for clean type checking elsewhere
+// 1. TypeScript Contract
 export interface Course {
   id: string;
   title: string;
@@ -15,13 +15,93 @@ export interface Course {
   level: "Beginner" | "Intermediate" | "Advanced";
 }
 
-interface CoursesExploreProps {
-  initialCourses: Course[];
-}
-
 const ITEMS_PER_PAGE = 4;
 
-export default function CoursesExplore({ initialCourses }: CoursesExploreProps) {
+export default function CoursesExplore() {
+  // 2. Localized Dataset inside the component itself
+  const internalCourses: Course[] = [
+    {
+      id: "c-1",
+      title: "Complete Next.js Enterprise Starter Guide (v16+)",
+      instructor: "Moajjem Hossain",
+      rating: 4.9,
+      price: 99,
+      category: "Web Development",
+      level: "Advanced",
+      imageUrl: "https://images.unsplash.com/photo-1618401471353-b98aedd07871?auto=format&fit=crop&w=600&q=80",
+    },
+    {
+      id: "c-2",
+      title: "Flutter & React Native: Ultimate Cross-Platform Guide",
+      instructor: "Dr. Angela Yu",
+      rating: 4.8,
+      price: 89,
+      category: "App Development",
+      level: "Intermediate",
+      imageUrl: "https://images.unsplash.com/photo-1512941937669-90a1b58e7e9c?auto=format&fit=crop&w=600&q=80",
+    },
+    {
+      id: "c-3",
+      title: "Multimodal Deep Learning & Computer Vision Foundations",
+      instructor: "Prof. Andrew Ng",
+      rating: 4.9,
+      price: 149,
+      category: "Artificial Intelligence",
+      level: "Advanced",
+      imageUrl: "https://images.unsplash.com/photo-1677442136019-21780efad99a?auto=format&fit=crop&w=600&q=80",
+    },
+    {
+      id: "c-4",
+      title: "Advanced Penetration Testing & Secure IAM Systems",
+      instructor: "Nathaniel Cole",
+      rating: 4.7,
+      price: 119,
+      category: "Cyber Security",
+      level: "Advanced",
+      imageUrl: "https://images.unsplash.com/photo-1550751827-4bd374c3f58b?auto=format&fit=crop&w=600&q=80",
+    },
+    {
+      id: "c-5",
+      title: "React Core Internals & Advanced State Architecture",
+      instructor: "Dan Abramov",
+      rating: 4.9,
+      price: 79,
+      category: "Web Development",
+      level: "Advanced",
+      imageUrl: "https://images.unsplash.com/photo-1633356122544-f134324a6cee?auto=format&fit=crop&w=600&q=80",
+    },
+    {
+      id: "c-6",
+      title: "Tailwind CSS Production UI Systems & Engineering",
+      instructor: "Adam Wathan",
+      rating: 4.8,
+      price: 49,
+      category: "Web Development",
+      level: "Beginner",
+      imageUrl: "https://images.unsplash.com/photo-1507238691740-187a5b1d37b8?auto=format&fit=crop&w=600&q=80",
+    },
+    {
+      id: "c-7",
+      title: "iOS 19 & Swift UI Architecture Masterclass",
+      instructor: "Paul Hudson",
+      rating: 4.6,
+      price: 129,
+      category: "App Development",
+      level: "Intermediate",
+      imageUrl: "https://images.unsplash.com/photo-1551288049-bebda4e38f71?auto=format&fit=crop&w=600&q=80",
+    },
+    {
+      id: "c-8",
+      title: "Introduction to Cloud-Native Fog Architecture",
+      instructor: "Dr. Architectural Expert",
+      rating: 4.5,
+      price: 159,
+      category: "Cloud Computing",
+      level: "Advanced",
+      imageUrl: "https://images.unsplash.com/photo-1451187580459-43490279c0fa?auto=format&fit=crop&w=600&q=80",
+    },
+  ];
+
   // --- UI Filter States ---
   const [searchQuery, setSearchQuery] = useState("");
   const [selectedCategory, setSelectedCategory] = useState("All");
@@ -30,13 +110,11 @@ export default function CoursesExplore({ initialCourses }: CoursesExploreProps) 
   const [currentPage, setCurrentPage] = useState<number>(1);
   const [isLoading, setIsLoading] = useState<boolean>(true);
 
-  // Dynamic clean mapping for categories
   const categories = ["All", "Web Development", "App Development", "Artificial Intelligence", "Cyber Security", "Cloud Computing"];
 
-  // Simulate network fetch latency on state modifications
   useEffect(() => {
     setIsLoading(true);
-    const timer = setTimeout(() => setIsLoading(false), 600);
+    const timer = setTimeout(() => setIsLoading(false), 500);
     return () => clearTimeout(timer);
   }, [searchQuery, selectedCategory, maxPrice, sortBy]);
 
@@ -45,9 +123,9 @@ export default function CoursesExplore({ initialCourses }: CoursesExploreProps) 
     setCurrentPage(1);
   };
 
-  // --- Search & Filtering Pipeline ---
+  // --- Filtering Rules Core Engine ---
   const filteredAndSortedCourses = useMemo(() => {
-    let result = [...initialCourses];
+    let result = [...internalCourses];
 
     if (searchQuery.trim() !== "") {
       const query = searchQuery.toLowerCase();
@@ -73,9 +151,8 @@ export default function CoursesExplore({ initialCourses }: CoursesExploreProps) 
     }
 
     return result;
-  }, [initialCourses, searchQuery, selectedCategory, maxPrice, sortBy]);
+  }, [searchQuery, selectedCategory, maxPrice, sortBy]);
 
-  // --- Pagination Slice Calculators ---
   const totalPages = Math.ceil(filteredAndSortedCourses.length / ITEMS_PER_PAGE);
   const paginatedCourses = useMemo(() => {
     const startIndex = (currentPage - 1) * ITEMS_PER_PAGE;
@@ -91,23 +168,23 @@ export default function CoursesExplore({ initialCourses }: CoursesExploreProps) 
   };
 
   return (
-    <div className="min-h-screen bg-slate-50/50 dark:bg-slate-950 text-slate-800 dark:text-slate-100 py-12 px-4 sm:px-6 lg:px-8">
+    <div className="w-full bg-transparent text-slate-800 dark:text-slate-100 py-12 px-4">
       <div className="max-w-7xl mx-auto space-y-10">
         
-        {/* Page Top Header Section */}
-        <div className="text-left space-y-2 border-b border-slate-200 dark:border-slate-800 pb-6">
-          <h1 className="text-3xl font-black tracking-tight sm:text-4xl text-slate-900 dark:text-white">
-            Explore Engineering Programs
-          </h1>
-          <p className="text-sm sm:text-base text-slate-500 max-w-2xl leading-relaxed">
-            Search, filter, and isolate specialized production-ready courses built for advanced engineering milestones.
-          </p>
+        {/* Title Elements */}
+        <div className="text-center space-y-2 max-w-xl mx-auto mb-6">
+          <span className="text-xs font-bold uppercase tracking-widest text-blue-600 dark:text-blue-400 bg-blue-50 dark:bg-blue-950/40 px-3 py-1 rounded-full border border-blue-200/25">
+            Course Catalog
+          </span>
+          <h2 className="text-3xl font-extrabold tracking-tight text-slate-800 dark:text-slate-100 sm:text-4xl">
+            Filter & Find Your Perfect Path
+          </h2>
         </div>
 
-        {/* Global Toolbar Control Area */}
+        {/* Catalog Blueprint Wrapper Grid */}
         <div className="grid grid-cols-1 lg:grid-cols-4 gap-8 items-start w-full">
           
-          {/* LEFT PANEL: Advanced Search Filter Mechanics */}
+          {/* Filtering Control Bar Side Drawer */}
           <aside className="w-full bg-white dark:bg-slate-900 border border-slate-200/60 dark:border-slate-800 p-6 rounded-2xl shadow-sm space-y-6 lg:sticky lg:top-6">
             <div className="flex items-center justify-between border-b border-slate-100 dark:border-slate-800 pb-3">
               <span className="flex items-center gap-2 font-bold text-sm tracking-wide uppercase text-slate-900 dark:text-slate-200">
@@ -124,7 +201,7 @@ export default function CoursesExplore({ initialCourses }: CoursesExploreProps) 
 
             {/* Input Element */}
             <div className="space-y-2">
-              <label className="text-xs font-bold uppercase tracking-wider text-slate-400 dark:text-slate-500">
+              <label className="text-xs font-bold uppercase tracking-wider text-slate-400 dark:text-slate-500 block text-left">
                 Search Catalog
               </label>
               <div className="relative w-full group">
@@ -146,7 +223,7 @@ export default function CoursesExplore({ initialCourses }: CoursesExploreProps) 
 
             {/* Category Filter Element */}
             <div className="space-y-2">
-              <label className="text-xs font-bold uppercase tracking-wider text-slate-400 dark:text-slate-500">
+              <label className="text-xs font-bold uppercase tracking-wider text-slate-400 dark:text-slate-500 block text-left">
                 Course Category
               </label>
               <div className="flex flex-col gap-1.5">
@@ -167,7 +244,7 @@ export default function CoursesExplore({ initialCourses }: CoursesExploreProps) 
               </div>
             </div>
 
-            {/* Price Range Filter Slider Module */}
+            {/* Price Slider Module */}
             <div className="space-y-2">
               <div className="flex justify-between items-center text-xs font-bold uppercase tracking-wider">
                 <span className="text-slate-400 dark:text-slate-500">Max Budget</span>
@@ -193,10 +270,8 @@ export default function CoursesExplore({ initialCourses }: CoursesExploreProps) 
             </div>
           </aside>
 
-          {/* RIGHT PANEL: Dynamic Sorting Header + Cards View Engine */}
+          {/* RIGHT PANEL: Dynamic Sort Header + Card Render System */}
           <main className="lg:col-span-3 space-y-6 w-full">
-            
-            {/* Action Meta Filters Bar Component */}
             <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 bg-white dark:bg-slate-900 border border-slate-200/60 dark:border-slate-800 px-5 py-4 rounded-2xl shadow-sm w-full">
               <p className="text-xs sm:text-sm font-medium text-slate-500">
                 Showing <span className="font-bold text-slate-800 dark:text-slate-200">{filteredAndSortedCourses.length}</span> programs found
@@ -223,7 +298,7 @@ export default function CoursesExplore({ initialCourses }: CoursesExploreProps) 
               </div>
             </div>
 
-            {/* Dynamic Card Map Core Container */}
+            {/* Layout Box */}
             <div className="w-full">
               {isLoading ? (
                 <div className="grid grid-cols-1 sm:grid-cols-2 gap-6 w-full">
@@ -242,13 +317,13 @@ export default function CoursesExplore({ initialCourses }: CoursesExploreProps) 
                   <div className="text-slate-300 dark:text-slate-700 font-bold text-5xl">ⓘ</div>
                   <h3 className="text-lg font-bold text-slate-800 dark:text-slate-200">No matching programs found</h3>
                   <p className="text-xs sm:text-sm text-slate-400 max-w-xs mx-auto">
-                    Try modifying your active search string terms, shifting the max price constraint, or clearing options.
+                    Try modifying your search query or expanding your max price filter range.
                   </p>
                 </div>
               )}
             </div>
 
-            {/* Pagination Segment Footer Component Trigger */}
+            {/* Pagination Component Toggles */}
             {!isLoading && totalPages > 1 && (
               <div className="flex items-center justify-between border-t border-slate-200 dark:border-slate-800 pt-6 w-full">
                 <button
@@ -274,7 +349,6 @@ export default function CoursesExplore({ initialCourses }: CoursesExploreProps) 
                 </button>
               </div>
             )}
-
           </main>
         </div>
       </div>
@@ -282,25 +356,16 @@ export default function CoursesExplore({ initialCourses }: CoursesExploreProps) 
   );
 }
 
-// 📄 Reusable Card Presentation Component
+// Reusable Presentation Layer
 function CourseCatalogCard({ course }: { course: Course }) {
   return (
     <div className="w-full border border-slate-200/60 dark:border-slate-800 hover:border-blue-500/40 bg-white/70 dark:bg-slate-900/40 backdrop-blur-sm shadow-sm hover:shadow-xl transition-all duration-300 hover:-translate-y-1.5 group rounded-2xl overflow-hidden flex flex-col justify-between text-left cursor-pointer">
       <div className="relative w-full h-44 overflow-hidden bg-slate-100 dark:bg-slate-800">
-        <img
-          src={course.imageUrl}
-          alt={course.title}
-          className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-105"
-          loading="lazy"
-        />
+        <img src={course.imageUrl} alt={course.title} className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-105" loading="lazy" />
         <span className="absolute top-3 left-3 text-[9px] font-extrabold uppercase tracking-widest bg-white/90 dark:bg-slate-900/90 backdrop-blur-md text-blue-600 dark:text-blue-400 px-2.5 py-1 rounded-full border border-slate-200/50 dark:border-slate-700/80">
           {course.category}
         </span>
-        <span className={`absolute top-3 right-3 text-[9px] font-extrabold uppercase tracking-widest px-2.5 py-1 rounded-full border ${
-          course.level === "Advanced" 
-            ? "bg-purple-500/10 text-purple-600 dark:text-purple-400 border-purple-500/20" 
-            : "bg-emerald-500/10 text-emerald-600 dark:text-emerald-400 border-emerald-500/20"
-        }`}>
+        <span className={`absolute top-3 right-3 text-[9px] font-extrabold uppercase tracking-widest px-2.5 py-1 rounded-full border ${course.level === "Advanced" ? "bg-purple-500/10 text-purple-600 dark:text-purple-400 border-purple-500/20" : "bg-emerald-500/10 text-emerald-600 dark:text-emerald-400 border-emerald-500/20"}`}>
           {course.level}
         </span>
       </div>
@@ -326,10 +391,7 @@ function CourseCatalogCard({ course }: { course: Course }) {
             <span className="text-[9px] uppercase tracking-wider text-slate-400 dark:text-slate-500 block font-bold">Total Fee</span>
             <span className="text-lg font-black text-slate-800 dark:text-slate-100">${course.price}</span>
           </div>
-          <button
-            type="button"
-            className="text-xs font-bold px-4 py-2 bg-blue-50 dark:bg-blue-950/40 text-blue-600 dark:text-blue-400 rounded-xl hover:bg-blue-600 hover:text-white dark:hover:bg-blue-600 dark:hover:text-white transition-all duration-300 cursor-pointer"
-          >
+          <button type="button" className="text-xs font-bold px-4 py-2 bg-blue-50 dark:bg-blue-950/40 text-blue-600 dark:text-blue-400 rounded-xl hover:bg-blue-600 hover:text-white dark:hover:bg-blue-600 dark:hover:text-white transition-all duration-300 cursor-pointer">
             View Details
           </button>
         </div>
@@ -338,7 +400,7 @@ function CourseCatalogCard({ course }: { course: Course }) {
   );
 }
 
-// 📄 Reusable Component: Isolated Loading Skeleton UI
+// Skeleton Component Layer
 function CourseCatalogCardSkeleton() {
   return (
     <div className="w-full border border-slate-200/50 dark:border-slate-800/80 bg-white/40 dark:bg-slate-900/30 rounded-2xl overflow-hidden flex flex-col items-start animate-pulse">
@@ -359,5 +421,4 @@ function CourseCatalogCardSkeleton() {
       </div>
     </div>
   );
-  
 }
