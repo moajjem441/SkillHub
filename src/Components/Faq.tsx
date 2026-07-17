@@ -34,6 +34,7 @@ export default function Faq() {
       answer: "Absolutely. We offer an integrated developer ecosystem where you can clarify concepts on complex computer vision datasets, modular U-Net layers, or CNN tuning alongside our dedicated engineering mentors.",
     },
   ];
+  
 
   return (
     <section className="w-full max-w-4xl mx-auto py-16 px-4 space-y-12">
