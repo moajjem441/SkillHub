@@ -359,4 +359,5 @@ function CourseCatalogCardSkeleton() {
       </div>
     </div>
   );
+  
 }
