@@ -61,13 +61,13 @@ export default function FeaturedCourses() {
     <section className="w-full max-w-7xl mx-auto space-y-10 py-16 px-4">
       {/* সেকশন হেডার */}
       <div className="text-center space-y-2">
-        <span className="text-xs font-bold uppercase tracking-widest text-primary bg-primary/5 px-3 py-1 rounded-full border border-primary/10">
+        <span className="text-xs font-bold uppercase tracking-widest text-blue-400 bg-blue-500/20 px-3 py-1 rounded-full border border-blue-500/30">
           Academic Excellence
         </span>
-        <h2 className="text-3xl font-extrabold tracking-tight text-foreground sm:text-4xl">
+        <h2 className="text-3xl font-extrabold tracking-tight text-white sm:text-4xl">
           Explore Our Featured Courses
         </h2>
-        <p className="text-slate-500 max-w-xl mx-auto text-sm sm:text-base">
+        <p className="text-slate-400 max-w-xl mx-auto text-sm sm:text-base">
           Join our highly rated premium courses to transform your concepts into production-grade professional skills.
         </p>
       </div>
