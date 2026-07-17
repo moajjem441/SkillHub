@@ -6,9 +6,13 @@ import NextLink from "next/link";
 import { Link, Button } from "@heroui/react";
 import { FiBookOpen, FiSearch, FiMenu, FiX } from "react-icons/fi";
 
+import { useRouter } from "next/navigation";
+
 export default function Navbar() {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const pathname = usePathname();
+
+  const router = useRouter();
 
   // Navigation Links Definition
   const navItems = [
@@ -79,8 +83,7 @@ export default function Navbar() {
 
           {/* Login Button */}
           <Button
-            as={NextLink}
-            href="/login"
+            onClick={() => router.push("/login")}
             variant="light"
             radius="xl"
             className="hidden sm:inline-flex text-sm font-medium text-slate-300 hover:text-white transition-colors"
@@ -90,8 +93,8 @@ export default function Navbar() {
 
           {/* Register Button */}
           <Button
-            as={NextLink}
-            href="/register"
+           onClick={() => router.push("/register")}
+            
             color="primary"
             variant="solid"
             radius="xl"

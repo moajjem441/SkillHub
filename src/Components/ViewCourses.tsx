@@ -15,7 +15,7 @@ interface ViewCoursesProps {
 export default function ViewCourses({ courseId }: ViewCoursesProps) {
   const [activeTab, setActiveTab] = useState<"overview" | "curriculum">("overview");
 
-  // Dynamic Content Data Set (id-র সাথে ম্যাচ করে লোড হবে)
+  // Dynamic Content Data Set
   const courseData = {
     id: courseId,
     title: "Complete Next.js Enterprise Starter Guide (v16+)",
@@ -71,11 +71,11 @@ export default function ViewCourses({ courseId }: ViewCoursesProps) {
   return (
     <div className="w-full text-slate-100 pb-20">
       
-      {/* ১. BANNER (HERO SECTION) */}
-      <section className="w-full bg-gradient-to-br from-slate-950 via-slate-900 to-slate-950 text-white py-12 md:py-20 px-4 border-b border-slate-700/60">
-        <div className="max-w-7xl mx-auto grid grid-cols-1 lg:grid-cols-3 gap-8 items-center">
-          <div className="lg:col-span-2 space-y-5">
-            <div className="flex flex-wrap gap-2.5">
+      {/* ১. BANNER (HERO SECTION) - ফুল-উইথ ও সেন্টার অ্যালাইনড */}
+      <section className="w-full max-w-7xl mx-auto bg-gradient-to-br from-slate-950 via-slate-900 to-slate-950 text-white py-12 md:py-20 px-4 border-b border-slate-700/60">
+        <div className="max-w-7xl mx-auto grid grid-cols-1 gap-8 items-center text-center">
+          <div className="space-y-5">
+            <div className="flex flex-wrap gap-2.5 justify-center">
               <span className="text-[10px] font-black uppercase tracking-widest bg-gradient-to-r from-blue-600 to-indigo-600 text-white px-3 py-1 rounded-full">
                 {courseData.category}
               </span>
@@ -86,12 +86,12 @@ export default function ViewCourses({ courseId }: ViewCoursesProps) {
             <h1 className="text-3xl md:text-5xl font-extrabold tracking-tight text-white leading-tight">
               {courseData.title}
             </h1>
-            <p className="text-slate-400 text-sm md:text-base font-medium max-w-3xl leading-relaxed">
+            <p className="text-slate-400 text-sm md:text-base font-medium max-w-3xl mx-auto leading-relaxed">
               {courseData.subtitle}
             </p>
             
             {/* RATING */}
-            <div className="flex flex-wrap items-center gap-4 text-xs md:text-sm pt-2">
+            <div className="flex flex-wrap items-center justify-center gap-4 text-xs md:text-sm pt-2">
               <div className="flex items-center gap-1.5 text-amber-400 font-bold">
                 <FiStar className="fill-current" />
                 <span>{courseData.rating.toFixed(1)}</span>
