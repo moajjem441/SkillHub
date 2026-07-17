@@ -20,7 +20,6 @@ export default function Newsletter() {
       setErrorMessage("Please enter a valid email address.");
       return;
     }
-    
 
     // 2. Comprehensive Email Regex RFC 5322 Standard Check
     const emailRegex = /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/;
@@ -38,16 +37,16 @@ export default function Newsletter() {
 
   return (
     <section className="w-full max-w-5xl mx-auto py-12 px-4">
-      {/* Premium SaaS Gradient Mesh Background Card Container */}
-      <div className="relative w-full rounded-3xl overflow-hidden bg-slate-900 text-slate-100 p-8 sm:p-12 lg:p-16 border border-slate-800 shadow-xl">
+      {/* Premium Dark Glass Card Container */}
+      <div className="relative w-full rounded-3xl overflow-hidden bg-slate-900/80 backdrop-blur-xl text-slate-100 p-8 sm:p-12 lg:p-16 border border-slate-700/60 shadow-2xl shadow-black/40">
         {/* Subtle Decorative Architectural Grid Background Gradients */}
-        <div className="absolute inset-0 bg-[radial-gradient(circle_at_top_right,rgba(59,130,246,0.12),transparent_45%)]" />
-        <div className="absolute inset-0 bg-[radial-gradient(circle_at_bottom_left,rgba(16,185,129,0.06),transparent_45%)]" />
+        <div className="absolute inset-0 bg-[radial-gradient(circle_at_top_right,rgba(59,130,246,0.08),transparent_45%)]" />
+        <div className="absolute inset-0 bg-[radial-gradient(circle_at_bottom_left,rgba(16,185,129,0.04),transparent_45%)]" />
 
         <div className="relative z-10 max-w-2xl mx-auto text-center space-y-8">
           {/* Typography Heading Info */}
           <div className="space-y-3">
-            <span className="text-xs font-bold uppercase tracking-widest text-blue-400 bg-blue-500/10 px-3 py-1 rounded-full border border-blue-500/20">
+            <span className="text-xs font-bold uppercase tracking-widest text-blue-400 bg-blue-500/20 px-3 py-1 rounded-full border border-blue-500/30">
               Stay Updated
             </span>
             <h2 className="text-2xl font-extrabold tracking-tight sm:text-4xl text-white">
@@ -71,13 +70,13 @@ export default function Newsletter() {
                   value={email}
                   onChange={(e) => {
                     setEmail(e.target.value);
-                    if (status !== "idle") setStatus("idle"); // Clear error states cleanly on type
+                    if (status !== "idle") setStatus("idle");
                   }}
                   placeholder="Enter your professional email"
-                  className={`w-full pl-11 pr-4 py-3 bg-slate-950 border text-slate-100 placeholder-slate-500 text-sm rounded-xl focus:outline-none focus:ring-2 transition-all duration-300 ${
+                  className={`w-full pl-11 pr-4 py-3 bg-slate-800/60 backdrop-blur-sm border text-slate-100 placeholder-slate-500 text-sm rounded-xl focus:outline-none focus:ring-2 transition-all duration-300 ${
                     status === "error"
-                      ? "border-rose-500/60 focus:ring-rose-500/40"
-                      : "border-slate-800 focus:border-blue-500/50 focus:ring-blue-500/30"
+                      ? "border-rose-500/60 focus:ring-rose-500/20"
+                      : "border-slate-700/70 focus:border-blue-500/50 focus:ring-blue-500/20"
                   }`}
                 />
               </div>
@@ -85,7 +84,7 @@ export default function Newsletter() {
               {/* Action Button Element */}
               <button
                 type="submit"
-                className="px-6 py-3 bg-blue-600 hover:bg-blue-500 active:bg-blue-700 text-white font-bold text-sm rounded-xl tracking-wide shadow-md shadow-blue-900/20 hover:shadow-lg transition-all duration-300 whitespace-nowrap"
+                className="px-6 py-3 bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-500 hover:to-indigo-500 active:scale-[0.98] text-white font-bold text-sm rounded-xl tracking-wide shadow-lg shadow-blue-500/30 hover:shadow-blue-500/40 transition-all duration-300 whitespace-nowrap border-none"
               >
                 Subscribe Now
               </button>
