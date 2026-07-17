@@ -40,13 +40,13 @@ export default function Faq() {
     <section className="w-full max-w-4xl mx-auto py-16 px-4 space-y-12">
       {/* Section Header */}
       <div className="text-center space-y-2">
-        <span className="text-xs font-bold uppercase tracking-widest text-blue-600 dark:text-blue-400 bg-blue-50 dark:bg-blue-950/40 px-3 py-1 rounded-full border border-blue-200/20">
+        <span className="text-xs font-bold uppercase tracking-widest text-blue-400 bg-blue-500/20 px-3 py-1 rounded-full border border-blue-500/30">
           Questions & Answers
         </span>
-        <h2 className="text-3xl font-extrabold tracking-tight text-slate-800 dark:text-slate-100 sm:text-4xl">
+        <h2 className="text-3xl font-extrabold tracking-tight text-white sm:text-4xl">
           Frequently Asked Questions
         </h2>
-        <p className="text-slate-500 max-w-xl mx-auto text-sm sm:text-base">
+        <p className="text-slate-400 max-w-xl mx-auto text-sm sm:text-base">
           Got questions about our production-grade technical engineering programs? Find quick answers right here.
         </p>
       </div>
@@ -66,19 +66,19 @@ function FaqAccordionItem({ item }: { item: FaqItem }) {
   const [isOpen, setIsOpen] = useState(false);
 
   return (
-    <div className="w-full border border-slate-200/60 dark:border-slate-800/80 bg-white/70 dark:bg-slate-900/40 backdrop-blur-sm rounded-2xl overflow-hidden transition-all duration-300 shadow-sm hover:border-slate-300 dark:hover:border-slate-700">
+    <div className="w-full border border-slate-700/60 bg-slate-900/80 backdrop-blur-xl rounded-2xl overflow-hidden transition-all duration-300 shadow-xl shadow-black/40 hover:shadow-2xl hover:shadow-blue-500/10 hover:border-blue-500/50">
       {/* Header Button Trigger */}
       <button
         type="button"
         onClick={() => setIsOpen(!isOpen)}
-        className="w-full p-5 sm:p-6 flex justify-between items-center gap-4 text-left font-bold text-slate-800 dark:text-slate-100 text-sm sm:text-base group select-none"
+        className="w-full p-5 sm:p-6 flex justify-between items-center gap-4 text-left font-bold text-white text-sm sm:text-base group select-none"
       >
-        <span className="group-hover:text-blue-600 dark:group-hover:text-blue-400 transition-colors duration-200 tracking-tight">
+        <span className="group-hover:text-blue-400 transition-colors duration-200 tracking-tight">
           {item.question}
         </span>
         <span
-          className={`p-2 rounded-xl bg-slate-50 dark:bg-slate-800/50 text-slate-500 dark:text-slate-400 transition-all duration-300 ${
-            isOpen ? "rotate-180 bg-blue-500/10 text-blue-600 dark:text-blue-400" : ""
+          className={`p-2 rounded-xl bg-slate-800/60 text-slate-400 transition-all duration-300 ${
+            isOpen ? "rotate-180 bg-blue-500/20 text-blue-400" : ""
           }`}
         >
           <FiChevronDown size={18} />
@@ -92,7 +92,7 @@ function FaqAccordionItem({ item }: { item: FaqItem }) {
         }`}
       >
         <div className="overflow-hidden">
-          <div className="px-5 pb-5 sm:px-6 sm:pb-6 text-sm leading-relaxed text-slate-500 dark:text-slate-400 border-t border-slate-100/60 dark:border-slate-850/60 pt-4">
+          <div className="px-5 pb-5 sm:px-6 sm:pb-6 text-sm leading-relaxed text-slate-400 border-t border-slate-700/60 pt-4">
             {item.answer}
           </div>
         </div>
