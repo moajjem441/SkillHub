@@ -28,7 +28,7 @@ export default function CoursesExplore() {
       price: 99,
       category: "Web Development",
       level: "Advanced",
-      imageUrl: "https://images.unsplash.com/photo-1618401471353-b98aedd07871?auto=format&fit=crop&w=600&q=80",
+      imageUrl: "https://images.unsplash.com/photo-1555066931-4365d14bab8c?auto=format&fit=crop&w=600&q=80", 
     },
     {
       id: "c-2",
@@ -48,7 +48,7 @@ export default function CoursesExplore() {
       price: 149,
       category: "Artificial Intelligence",
       level: "Advanced",
-      imageUrl: "https://images.unsplash.com/photo-1677442136019-21780efad99a?auto=format&fit=crop&w=600&q=80",
+      imageUrl: "https://images.unsplash.com/photo-1620712943543-bcc4688e7485?auto=format&fit=crop&w=600&q=80",
     },
     {
       id: "c-4",
