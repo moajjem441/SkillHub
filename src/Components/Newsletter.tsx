@@ -20,6 +20,7 @@ export default function Newsletter() {
       setErrorMessage("Please enter a valid email address.");
       return;
     }
+    
 
     // 2. Comprehensive Email Regex RFC 5322 Standard Check
     const emailRegex = /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/;
