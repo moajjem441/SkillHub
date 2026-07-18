@@ -2,7 +2,9 @@
 
 import React, { useState, useEffect, useMemo } from "react";
 import Link from "next/link";
+import { useRouter } from "next/navigation"; // 👈 রাউটার যোগ করুন
 import { FiSearch, FiStar, FiUser, FiSliders, FiChevronLeft, FiChevronRight, FiRefreshCw } from "react-icons/fi";
+import { authClient } from "@/lib/auth-client"; // 👈 authClient যোগ করুন
 
 // 1. TypeScript Contract
 export interface Course {
@@ -19,109 +21,47 @@ export interface Course {
 const ITEMS_PER_PAGE = 4;
 
 export default function CoursesExplore() {
-  // 2. Localized Dataset
-//   const internalCourses: Course[] = [
-//     {
-//       id: "c-1",
-//       title: "Complete Next.js Enterprise Starter Guide (v16+)",
-//       instructor: "Moajjem Hossain",
-//       rating: 4.9,
-//       price: 99,
-//       category: "Web Development",
-//       level: "Advanced",
-//       imageUrl: "https://images.unsplash.com/photo-1555066931-4365d14bab8c?auto=format&fit=crop&w=600&q=80", 
-//     },
-//     {
-//       id: "c-2",
-//       title: "Flutter & React Native: Ultimate Cross-Platform Guide",
-//       instructor: "Dr. Angela Yu",
-//       rating: 4.8,
-//       price: 89,
-//       category: "App Development",
-//       level: "Intermediate",
-//       imageUrl: "https://images.unsplash.com/photo-1512941937669-90a1b58e7e9c?auto=format&fit=crop&w=600&q=80",
-//     },
-//     {
-//       id: "c-3",
-//       title: "Multimodal Deep Learning & Computer Vision Foundations",
-//       instructor: "Prof. Andrew Ng",
-//       rating: 4.9,
-//       price: 149,
-//       category: "Artificial Intelligence",
-//       level: "Advanced",
-//       imageUrl: "https://images.unsplash.com/photo-1620712943543-bcc4688e7485?auto=format&fit=crop&w=600&q=80",
-//     },
-//     {
-//       id: "c-4",
-//       title: "Advanced Penetration Testing & Secure IAM Systems",
-//       instructor: "Nathaniel Cole",
-//       rating: 4.7,
-//       price: 119,
-//       category: "Cyber Security",
-//       level: "Advanced",
-//       imageUrl: "https://images.unsplash.com/photo-1550751827-4bd374c3f58b?auto=format&fit=crop&w=600&q=80",
-//     },
-//     {
-//       id: "c-5",
-//       title: "React Core Internals & Advanced State Architecture",
-//       instructor: "Dan Abramov",
-//       rating: 4.9,
-//       price: 79,
-//       category: "Web Development",
-//       level: "Advanced",
-//       imageUrl: "https://images.unsplash.com/photo-1633356122544-f134324a6cee?auto=format&fit=crop&w=600&q=80",
-//     },
-//     {
-//       id: "c-6",
-//       title: "Tailwind CSS Production UI Systems & Engineering",
-//       instructor: "Adam Wathan",
-//       rating: 4.8,
-//       price: 49,
-//       category: "Web Development",
-//       level: "Beginner",
-//       imageUrl: "https://images.unsplash.com/photo-1507238691740-187a5b1d37b8?auto=format&fit=crop&w=600&q=80",
-//     },
-//     {
-//       id: "c-7",
-//       title: "iOS 19 & Swift UI Architecture Masterclass",
-//       instructor: "Paul Hudson",
-//       rating: 4.6,
-//       price: 129,
-//       category: "App Development",
-//       level: "Intermediate",
-//       imageUrl: "https://images.unsplash.com/photo-1551288049-bebda4e38f71?auto=format&fit=crop&w=600&q=80",
-//     },
-//     {
-//       id: "c-8",
-//       title: "Introduction to Cloud-Native Fog Architecture",
-//       instructor: "Dr. Architectural Expert",
-//       rating: 4.5,
-//       price: 159,
-//       category: "Cloud Computing",
-//       level: "Advanced",
-//       imageUrl: "https://images.unsplash.com/photo-1451187580459-43490279c0fa?auto=format&fit=crop&w=600&q=80",
-//     },
-//   ];
+  const router = useRouter();
+  const [isCheckingAuth, setIsCheckingAuth] = useState(true); // 👈 অথেনটিকেশন চেক হচ্ছে কিনা
+  const [courses, setCourses] = useState<Course[]>([]);
 
+  // 🔐 ১. ইউজার সেশন চেক করুন
+  useEffect(() => {
+    const checkAuth = async () => {
+      try {
+        const { data: session } = await authClient.getSession();
+        if (!session) {
+          // লগইন না থাকলে লগইন পেজে রিডাইরেক্ট
+          router.push("/login");
+        } else {
+          // লগইন থাকলে পেজ লোড হতে দিন
+          setIsCheckingAuth(false);
+        }
+      } catch (error) {
+        console.error("Auth check error:", error);
+        router.push("/login");
+      }
+    };
 
-const [courses, setCourses] = useState<Course[]>([]);
+    checkAuth();
+  }, [router]);
 
-useEffect(() => {
-  const fetchCourses = async () => {
-    const res = await fetch(`${process.env.NEXT_PUBLIC_SERVER_URL}/courses`);
-    const data = await res.json();
+  // ২. কোর্স ডেটা ফেচ করুন (শুধু লগইন থাকলে)
+  useEffect(() => {
+    if (isCheckingAuth) return; // অথেনটিকেশন চেক শেষ না হলে ডেটা ফেচ করবেন না
 
-    console.log(data);
+    const fetchCourses = async () => {
+      try {
+        const res = await fetch(`${process.env.NEXT_PUBLIC_SERVER_URL}/courses`);
+        const data = await res.json();
+        setCourses(data);
+      } catch (error) {
+        console.error("Error fetching courses:", error);
+      }
+    };
 
-    setCourses(data);
-  };
-
-  fetchCourses();
-}, []);
-
-
-
-
+    fetchCourses();
+  }, [isCheckingAuth]);
 
   // --- UI Filter States ---
   const [searchQuery, setSearchQuery] = useState("");
@@ -171,7 +111,7 @@ useEffect(() => {
     }
 
     return result;
-  }, [courses,searchQuery, selectedCategory, maxPrice, sortBy]);
+  }, [courses, searchQuery, selectedCategory, maxPrice, sortBy]);
 
   const totalPages = Math.ceil(filteredAndSortedCourses.length / ITEMS_PER_PAGE);
   const paginatedCourses = useMemo(() => {
@@ -186,6 +126,18 @@ useEffect(() => {
     setSortBy("featured");
     setCurrentPage(1);
   };
+
+  // 🔄 অথেনটিকেশন চেক শেষ না হলে লোডার দেখান
+  if (isCheckingAuth) {
+    return (
+      <div className="min-h-screen w-full bg-slate-950 flex items-center justify-center">
+        <div className="text-white text-center">
+          <div className="w-12 h-12 border-4 border-blue-500 border-t-transparent rounded-full animate-spin mx-auto mb-4"></div>
+          <p className="text-slate-400">Checking authentication...</p>
+        </div>
+      </div>
+    );
+  }
 
   return (
     <div className="w-full bg-transparent text-slate-100 py-12 px-4">
@@ -290,7 +242,7 @@ useEffect(() => {
             </div>
           </aside>
 
-          {/* RIGHT PANEL: Dynamic Sort Header + Card Render System */}
+          {/* RIGHT PANEL */}
           <main className="lg:col-span-3 space-y-6 w-full">
             <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 bg-slate-900/80 backdrop-blur-xl border border-slate-700/60 px-5 py-4 rounded-2xl shadow-2xl shadow-black/40 w-full">
               <p className="text-xs sm:text-sm font-medium text-slate-400">
@@ -343,7 +295,7 @@ useEffect(() => {
               )}
             </div>
 
-            {/* Pagination Component Toggles */}
+            {/* Pagination */}
             {!isLoading && totalPages > 1 && (
               <div className="flex items-center justify-between border-t border-slate-700/60 pt-6 w-full">
                 <button
@@ -416,19 +368,19 @@ function CourseCatalogCard({ course }: { course: Course }) {
             <span className="text-lg font-black text-white">${course.price}</span>
           </div>
           
-         <Link
-  href={`/courseDetails/${course._id}`}
-  className="text-xs font-bold px-4 py-2 bg-blue-500/20 text-blue-400 rounded-xl hover:bg-gradient-to-r hover:from-blue-600 hover:to-indigo-600 hover:text-white transition-all duration-300 cursor-pointer border border-blue-500/30 hover:border-transparent"
->
-  View Details
-</Link>
+          <Link
+            href={`/courseDetails/${course.id}`}
+            className="text-xs font-bold px-4 py-2 bg-blue-500/20 text-blue-400 rounded-xl hover:bg-gradient-to-r hover:from-blue-600 hover:to-indigo-600 hover:text-white transition-all duration-300 cursor-pointer border border-blue-500/30 hover:border-transparent"
+          >
+            View Details
+          </Link>
         </div>
       </div>
     </div>
   );
 }
 
-// Skeleton Component Layer
+// Skeleton Component
 function CourseCatalogCardSkeleton() {
   return (
     <div className="w-full border border-slate-700/60 bg-slate-900/60 backdrop-blur-sm rounded-2xl overflow-hidden flex flex-col items-start animate-pulse">

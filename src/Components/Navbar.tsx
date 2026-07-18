@@ -4,15 +4,29 @@ import React, { useState } from "react";
 import { usePathname } from "next/navigation";
 import NextLink from "next/link";
 import { Link, Button } from "@heroui/react";
-import { FiBookOpen, FiSearch, FiMenu, FiX } from "react-icons/fi";
-
+import { FiBookOpen, FiMenu, FiX } from "react-icons/fi";
 import { useRouter } from "next/navigation";
+import { authClient } from "@/lib/auth-client"; // Better-Auth ক্লায়েন্ট ইম্পোর্ট
 
 export default function Navbar() {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const pathname = usePathname();
-
   const router = useRouter();
+
+  // Better-Auth থেকে সেশন ডেটা রিড করা হচ্ছে
+  const { data: session, isPending } = authClient.useSession();
+
+  // সাইন-আউট হ্যান্ডলার
+  const handleSignOut = async () => {
+    await authClient.signOut({
+      fetchOptions: {
+        onSuccess: () => {
+          setIsMenuOpen(false);
+          router.push("/login");
+        },
+      },
+    });
+  };
 
   // Navigation Links Definition
   const navItems = [
@@ -21,7 +35,6 @@ export default function Navbar() {
     { label: "Add Course", href: "/add-course" },
     { label: "About Us", href: "/about" },
     { label: "Contact Us", href: "/contact" },
-   
   ];
 
   return (
@@ -70,40 +83,63 @@ export default function Navbar() {
           })}
         </ul>
 
-        {/* --- RIGHT: ACTIONS (SEARCH & AUTH BUTTONS) --- */}
+        {/* --- RIGHT: ACTIONS (DYNAMIC AUTH INTERFACE) --- */}
         <div className="flex items-center gap-3">
-          {/* Search Action */}
-          <Button
-            isIconOnly
-            variant="light"
-            radius="full"
-            aria-label="Search courses"
-            className="text-slate-400 hover:text-white transition-colors"
-          >
-            
-          </Button>
+          {isPending ? (
+            // সেশন লোড হওয়ার সময় একটি ছোট ডামি লোডার স্কেলেটন
+            <div className="w-8 h-8 rounded-full bg-slate-800 animate-pulse" />
+          ) : session ? (
+            // ইউজার লগইন থাকলে ডেস্কটপে এই প্রোফাইল ও সাইন আউট বাটন দেখাবে
+            <div className="flex items-center gap-3">
+              <div className="flex items-center gap-2">
+                {session.user.image ? (
+                  <img
+                    src={session.user.image}
+                    alt={session.user.name}
+                    className="w-8 h-8 rounded-full object-cover border border-blue-500/30"
+                  />
+                ) : (
+                  <div className="w-8 h-8 rounded-full bg-gradient-to-tr from-blue-500 to-indigo-500 flex items-center justify-center text-white font-bold text-xs shadow-md">
+                    {session.user.name?.charAt(0).toUpperCase()}
+                  </div>
+                )}
+                <span className="hidden md:inline text-sm font-medium text-slate-200 max-w-[100px] truncate">
+                  {session.user.name}
+                </span>
+              </div>
+              
+              <Button
+                onClick={handleSignOut}
+                variant="light"
+                radius="xl"
+                className="text-sm font-medium text-slate-300 hover:text-white transition-colors"
+              >
+                Sign Out
+              </Button>
+            </div>
+          ) : (
+            // ইউজার লগইন না থাকলে ডিফল্ট বাটনগুলো দেখাবে
+            <>
+              <Button
+                onClick={() => router.push("/login")}
+                variant="light"
+                radius="xl"
+                className="hidden sm:inline-flex text-sm font-medium text-slate-300 hover:text-white transition-colors"
+              >
+                Login
+              </Button>
 
-          {/* Login Button */}
-          <Button
-            onClick={() => router.push("/login")}
-            variant="light"
-            radius="xl"
-            className="hidden sm:inline-flex text-sm font-medium text-slate-300 hover:text-white transition-colors"
-          >
-            Login
-          </Button>
-
-          {/* Register Button */}
-          <Button
-           onClick={() => router.push("/register")}
-            
-            color="primary"
-            variant="solid"
-            radius="xl"
-            className="text-sm font-semibold shadow-lg shadow-blue-500/30 bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-500 hover:to-indigo-500 text-white border-none transition-all"
-          >
-            Register
-          </Button>
+              <Button
+                onClick={() => router.push("/register")}
+                color="primary"
+                variant="solid"
+                radius="xl"
+                className="text-sm font-semibold shadow-lg shadow-blue-500/30 bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-500 hover:to-indigo-500 text-white border-none transition-all"
+              >
+                Register
+              </Button>
+            </>
+          )}
         </div>
       </header>
 
@@ -130,28 +166,59 @@ export default function Navbar() {
             })}
           </ul>
           
-          {/* Mobile Auth Secondary Partition */}
+          {/* Mobile Auth Configuration Block */}
           <div className="pt-4 border-t border-slate-700/60 flex flex-col gap-2">
-            <Button
-              as={NextLink}
-              href="/login"
-              variant="flat"
-              radius="xl"
-              className="w-full font-medium text-slate-300 border border-slate-700/60 bg-slate-800/60 hover:bg-slate-700/60 transition-colors"
-              onClick={() => setIsMenuOpen(false)}
-            >
-              Login
-            </Button>
-            <Button
-              as={NextLink}
-              href="/register"
-              color="primary"
-              radius="xl"
-              className="w-full font-medium bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-500 hover:to-indigo-500 text-white border-none shadow-lg shadow-blue-500/30 transition-all"
-              onClick={() => setIsMenuOpen(false)}
-            >
-              Register
-            </Button>
+            {!isPending && session ? (
+              // মোবাইলের ভেতরে লগইন থাকা অবস্থায় লেআউট
+              <>
+                <div className="flex items-center gap-2 px-2 py-1">
+                  {session.user.image ? (
+                    <img
+                      src={session.user.image}
+                      alt={session.user.name}
+                      className="w-8 h-8 rounded-full object-cover border border-blue-500/30"
+                    />
+                  ) : (
+                    <div className="w-8 h-8 rounded-full bg-gradient-to-tr from-blue-500 to-indigo-500 flex items-center justify-center text-white font-bold text-xs">
+                      {session.user.name?.charAt(0).toUpperCase()}
+                    </div>
+                  )}
+                  <span className="text-sm font-medium text-slate-200">{session.user.name}</span>
+                </div>
+                <Button
+                  onClick={handleSignOut}
+                  variant="flat"
+                  radius="xl"
+                  className="w-full font-medium text-slate-300 border border-slate-700/60 bg-slate-800/60 hover:bg-slate-700/60 transition-colors"
+                >
+                  Sign Out
+                </Button>
+              </>
+            ) : (
+              // মোবাইলের ভেতরে লগআউট থাকা অবস্থায় লেআউট
+              <>
+                <Button
+                  as={NextLink}
+                  href="/login"
+                  variant="flat"
+                  radius="xl"
+                  className="w-full font-medium text-slate-300 border border-slate-700/60 bg-slate-800/60 hover:bg-slate-700/60 transition-colors"
+                  onClick={() => setIsMenuOpen(false)}
+                >
+                  Login
+                </Button>
+                <Button
+                  as={NextLink}
+                  href="/register"
+                  color="primary"
+                  radius="xl"
+                  className="w-full font-medium bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-500 hover:to-indigo-500 text-white border-none shadow-lg shadow-blue-500/30 transition-all"
+                  onClick={() => setIsMenuOpen(false)}
+                >
+                  Register
+                </Button>
+              </>
+            )}
           </div>
         </div>
       )}
