@@ -142,6 +142,7 @@ export default function AddCourseForm() {
             <span>{submitMessage}</span>
           </div>
         )}
+        
 
         <form onSubmit={handleSubmit(onSubmit)} className="space-y-6" noValidate>
           
