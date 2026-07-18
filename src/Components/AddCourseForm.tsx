@@ -1,10 +1,12 @@
 "use client";
 
-import React, { useState, useRef } from "react";
+import React, { useState, useEffect, useRef } from "react";
+import { useRouter } from "next/navigation";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import * as z from "zod";
 import toast from "react-hot-toast";
+import { authClient } from "@/lib/auth-client";
 import { 
   FiBook, FiUser, FiDollarSign, FiTag, FiAward, 
   FiClock, FiFileText, FiImage, FiUpload, FiX
@@ -47,8 +49,31 @@ const getInputStateStyles = (hasError: boolean) => hasError
 const labelStyles = "text-[11px] font-bold uppercase tracking-wider text-slate-400 block text-left select-none";
 
 export default function AddCourseForm() {
+  const router = useRouter();
+  const [isCheckingAuth, setIsCheckingAuth] = useState(true);
   const [isSubmitting, setIsSubmitting] = useState(false);
   const formRef = useRef<HTMLFormElement>(null);
+
+  // 🔐 ১. ইউজার সেশন চেক করুন
+  useEffect(() => {
+    const checkAuth = async () => {
+      try {
+        const { data: session } = await authClient.getSession();
+        if (!session) {
+          // লগইন না থাকলে লগইন পেজে রিডাইরেক্ট
+          router.push("/login");
+        } else {
+          // লগইন থাকলে পেজ লোড হতে দিন
+          setIsCheckingAuth(false);
+        }
+      } catch (error) {
+        console.error("Auth check error:", error);
+        router.push("/login");
+      }
+    };
+
+    checkAuth();
+  }, [router]);
 
   const {
     register,
@@ -113,9 +138,8 @@ export default function AddCourseForm() {
         duration: 4000,
       });
 
-      reset(); // ফর্ম ক্লিয়ার করুন
+      reset();
 
-      // স্ক্রল ফর্মের শীর্ষে রাখুন (ঐচ্ছিক)
       if (formRef.current) {
         formRef.current.scrollIntoView({ behavior: "smooth", block: "start" });
       }
@@ -132,6 +156,18 @@ export default function AddCourseForm() {
       setIsSubmitting(false);
     }
   };
+
+  // 🔄 অথেনটিকেশন চেক শেষ না হলে লোডার দেখান
+  if (isCheckingAuth) {
+    return (
+      <div className="min-h-screen w-full bg-slate-950 flex items-center justify-center">
+        <div className="text-white text-center">
+          <div className="w-12 h-12 border-4 border-blue-500 border-t-transparent rounded-full animate-spin mx-auto mb-4"></div>
+          <p className="text-slate-400">Checking authentication...</p>
+        </div>
+      </div>
+    );
+  }
 
   return (
     <div className="relative min-h-screen w-full bg-gradient-to-br from-slate-950 via-slate-900 to-slate-950 flex items-start justify-center p-4 overflow-y-auto">
