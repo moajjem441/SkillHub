@@ -79,7 +79,7 @@ export default function LoginForm() {
       });
 
       if (error) {
-        // ❌ Better Auth থেকে এরর মেসেজ
+       
         toast.error(error.message || "Invalid email or password. Please try again.", {
           id: loadingToast,
           duration: 5000,
@@ -88,7 +88,7 @@ export default function LoginForm() {
       }
 
       if (data) {
-        // ✅ সাফল্য টোস্ট
+        
         toast.success("Welcome back to our SkillHub!... 🎉", {
           id: loadingToast,
           duration: 3000,
