@@ -1,6 +1,6 @@
 "use client";
 
-import React from "react";
+
 import { Spinner } from "@heroui/react";
 
 export default function GlobalLoading() {
@@ -11,7 +11,7 @@ export default function GlobalLoading() {
         <Spinner 
           color="primary" 
           size="lg" 
-          labelColor="primary"
+          // 🛠️ labelColor="primary" লাইনটি ফেলে দেওয়া হয়েছে
           className="scale-110"
         />
         

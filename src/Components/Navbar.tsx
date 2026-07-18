@@ -18,8 +18,8 @@ export default function Navbar() {
   const navItems = [
     { label: "Home", href: "/" },
     { label: "Courses", href: "/courses" },
-    { label: "About", href: "/about" },
-    { label: "Contact", href: "/contact" },
+    { label: "Add Course", href: "/add-course" },
+   
   ];
 
   return (
@@ -78,7 +78,7 @@ export default function Navbar() {
             aria-label="Search courses"
             className="text-slate-400 hover:text-white transition-colors"
           >
-            <FiSearch size={20} />
+            
           </Button>
 
           {/* Login Button */}

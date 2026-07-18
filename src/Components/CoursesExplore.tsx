@@ -1,6 +1,7 @@
 "use client";
 
 import React, { useState, useEffect, useMemo } from "react";
+import Link from "next/link";
 import { FiSearch, FiStar, FiUser, FiSliders, FiChevronLeft, FiChevronRight, FiRefreshCw } from "react-icons/fi";
 
 // 1. TypeScript Contract
@@ -19,88 +20,108 @@ const ITEMS_PER_PAGE = 4;
 
 export default function CoursesExplore() {
   // 2. Localized Dataset
-  const internalCourses: Course[] = [
-    {
-      id: "c-1",
-      title: "Complete Next.js Enterprise Starter Guide (v16+)",
-      instructor: "Moajjem Hossain",
-      rating: 4.9,
-      price: 99,
-      category: "Web Development",
-      level: "Advanced",
-      imageUrl: "https://images.unsplash.com/photo-1555066931-4365d14bab8c?auto=format&fit=crop&w=600&q=80", 
-    },
-    {
-      id: "c-2",
-      title: "Flutter & React Native: Ultimate Cross-Platform Guide",
-      instructor: "Dr. Angela Yu",
-      rating: 4.8,
-      price: 89,
-      category: "App Development",
-      level: "Intermediate",
-      imageUrl: "https://images.unsplash.com/photo-1512941937669-90a1b58e7e9c?auto=format&fit=crop&w=600&q=80",
-    },
-    {
-      id: "c-3",
-      title: "Multimodal Deep Learning & Computer Vision Foundations",
-      instructor: "Prof. Andrew Ng",
-      rating: 4.9,
-      price: 149,
-      category: "Artificial Intelligence",
-      level: "Advanced",
-      imageUrl: "https://images.unsplash.com/photo-1620712943543-bcc4688e7485?auto=format&fit=crop&w=600&q=80",
-    },
-    {
-      id: "c-4",
-      title: "Advanced Penetration Testing & Secure IAM Systems",
-      instructor: "Nathaniel Cole",
-      rating: 4.7,
-      price: 119,
-      category: "Cyber Security",
-      level: "Advanced",
-      imageUrl: "https://images.unsplash.com/photo-1550751827-4bd374c3f58b?auto=format&fit=crop&w=600&q=80",
-    },
-    {
-      id: "c-5",
-      title: "React Core Internals & Advanced State Architecture",
-      instructor: "Dan Abramov",
-      rating: 4.9,
-      price: 79,
-      category: "Web Development",
-      level: "Advanced",
-      imageUrl: "https://images.unsplash.com/photo-1633356122544-f134324a6cee?auto=format&fit=crop&w=600&q=80",
-    },
-    {
-      id: "c-6",
-      title: "Tailwind CSS Production UI Systems & Engineering",
-      instructor: "Adam Wathan",
-      rating: 4.8,
-      price: 49,
-      category: "Web Development",
-      level: "Beginner",
-      imageUrl: "https://images.unsplash.com/photo-1507238691740-187a5b1d37b8?auto=format&fit=crop&w=600&q=80",
-    },
-    {
-      id: "c-7",
-      title: "iOS 19 & Swift UI Architecture Masterclass",
-      instructor: "Paul Hudson",
-      rating: 4.6,
-      price: 129,
-      category: "App Development",
-      level: "Intermediate",
-      imageUrl: "https://images.unsplash.com/photo-1551288049-bebda4e38f71?auto=format&fit=crop&w=600&q=80",
-    },
-    {
-      id: "c-8",
-      title: "Introduction to Cloud-Native Fog Architecture",
-      instructor: "Dr. Architectural Expert",
-      rating: 4.5,
-      price: 159,
-      category: "Cloud Computing",
-      level: "Advanced",
-      imageUrl: "https://images.unsplash.com/photo-1451187580459-43490279c0fa?auto=format&fit=crop&w=600&q=80",
-    },
-  ];
+//   const internalCourses: Course[] = [
+//     {
+//       id: "c-1",
+//       title: "Complete Next.js Enterprise Starter Guide (v16+)",
+//       instructor: "Moajjem Hossain",
+//       rating: 4.9,
+//       price: 99,
+//       category: "Web Development",
+//       level: "Advanced",
+//       imageUrl: "https://images.unsplash.com/photo-1555066931-4365d14bab8c?auto=format&fit=crop&w=600&q=80", 
+//     },
+//     {
+//       id: "c-2",
+//       title: "Flutter & React Native: Ultimate Cross-Platform Guide",
+//       instructor: "Dr. Angela Yu",
+//       rating: 4.8,
+//       price: 89,
+//       category: "App Development",
+//       level: "Intermediate",
+//       imageUrl: "https://images.unsplash.com/photo-1512941937669-90a1b58e7e9c?auto=format&fit=crop&w=600&q=80",
+//     },
+//     {
+//       id: "c-3",
+//       title: "Multimodal Deep Learning & Computer Vision Foundations",
+//       instructor: "Prof. Andrew Ng",
+//       rating: 4.9,
+//       price: 149,
+//       category: "Artificial Intelligence",
+//       level: "Advanced",
+//       imageUrl: "https://images.unsplash.com/photo-1620712943543-bcc4688e7485?auto=format&fit=crop&w=600&q=80",
+//     },
+//     {
+//       id: "c-4",
+//       title: "Advanced Penetration Testing & Secure IAM Systems",
+//       instructor: "Nathaniel Cole",
+//       rating: 4.7,
+//       price: 119,
+//       category: "Cyber Security",
+//       level: "Advanced",
+//       imageUrl: "https://images.unsplash.com/photo-1550751827-4bd374c3f58b?auto=format&fit=crop&w=600&q=80",
+//     },
+//     {
+//       id: "c-5",
+//       title: "React Core Internals & Advanced State Architecture",
+//       instructor: "Dan Abramov",
+//       rating: 4.9,
+//       price: 79,
+//       category: "Web Development",
+//       level: "Advanced",
+//       imageUrl: "https://images.unsplash.com/photo-1633356122544-f134324a6cee?auto=format&fit=crop&w=600&q=80",
+//     },
+//     {
+//       id: "c-6",
+//       title: "Tailwind CSS Production UI Systems & Engineering",
+//       instructor: "Adam Wathan",
+//       rating: 4.8,
+//       price: 49,
+//       category: "Web Development",
+//       level: "Beginner",
+//       imageUrl: "https://images.unsplash.com/photo-1507238691740-187a5b1d37b8?auto=format&fit=crop&w=600&q=80",
+//     },
+//     {
+//       id: "c-7",
+//       title: "iOS 19 & Swift UI Architecture Masterclass",
+//       instructor: "Paul Hudson",
+//       rating: 4.6,
+//       price: 129,
+//       category: "App Development",
+//       level: "Intermediate",
+//       imageUrl: "https://images.unsplash.com/photo-1551288049-bebda4e38f71?auto=format&fit=crop&w=600&q=80",
+//     },
+//     {
+//       id: "c-8",
+//       title: "Introduction to Cloud-Native Fog Architecture",
+//       instructor: "Dr. Architectural Expert",
+//       rating: 4.5,
+//       price: 159,
+//       category: "Cloud Computing",
+//       level: "Advanced",
+//       imageUrl: "https://images.unsplash.com/photo-1451187580459-43490279c0fa?auto=format&fit=crop&w=600&q=80",
+//     },
+//   ];
+
+
+const [courses, setCourses] = useState<Course[]>([]);
+
+useEffect(() => {
+  const fetchCourses = async () => {
+    const res = await fetch(`${process.env.NEXT_PUBLIC_SERVER_URL}/courses`);
+    const data = await res.json();
+
+    console.log(data);
+
+    setCourses(data);
+  };
+
+  fetchCourses();
+}, []);
+
+
+
+
 
   // --- UI Filter States ---
   const [searchQuery, setSearchQuery] = useState("");
@@ -124,7 +145,7 @@ export default function CoursesExplore() {
   };
 
   const filteredAndSortedCourses = useMemo(() => {
-    let result = [...internalCourses];
+    let result = [...courses];
 
     if (searchQuery.trim() !== "") {
       const query = searchQuery.toLowerCase();
@@ -150,7 +171,7 @@ export default function CoursesExplore() {
     }
 
     return result;
-  }, [searchQuery, selectedCategory, maxPrice, sortBy]);
+  }, [courses,searchQuery, selectedCategory, maxPrice, sortBy]);
 
   const totalPages = Math.ceil(filteredAndSortedCourses.length / ITEMS_PER_PAGE);
   const paginatedCourses = useMemo(() => {
@@ -394,12 +415,13 @@ function CourseCatalogCard({ course }: { course: Course }) {
             <span className="text-[9px] uppercase tracking-wider text-slate-500 block font-bold">Total Fee</span>
             <span className="text-lg font-black text-white">${course.price}</span>
           </div>
-          <button 
-            type="button" 
-            className="text-xs font-bold px-4 py-2 bg-blue-500/20 text-blue-400 rounded-xl hover:bg-gradient-to-r hover:from-blue-600 hover:to-indigo-600 hover:text-white transition-all duration-300 cursor-pointer border border-blue-500/30 hover:border-transparent"
-          >
-            View Details
-          </button>
+          
+         <Link
+  href={`/courseDetails/${course._id}`}
+  className="text-xs font-bold px-4 py-2 bg-blue-500/20 text-blue-400 rounded-xl hover:bg-gradient-to-r hover:from-blue-600 hover:to-indigo-600 hover:text-white transition-all duration-300 cursor-pointer border border-blue-500/30 hover:border-transparent"
+>
+  View Details
+</Link>
         </div>
       </div>
     </div>
