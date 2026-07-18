@@ -7,8 +7,11 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { FiUser, FiMail, FiLock, FiEye, FiEyeOff, FiArrowRight, FiCheckCircle } from "react-icons/fi";
 import { FcGoogle } from "react-icons/fc";
 import { registerSchema, RegisterFormValues } from "@/schemas/auth";
+import { authClient } from "@/lib/auth-client";
 
-// 🎨 Premium Dark Theme Input Styles
+import { useRouter } from "next/navigation";
+
+
 const inputBaseStyles = `
   w-full h-11 pl-10 pr-4 py-2.5 
   bg-slate-800/60 backdrop-blur-sm
@@ -26,6 +29,10 @@ const getInputStateStyles = (hasError: boolean) => hasError
 const iconContainerStyles = "absolute inset-y-0 left-3.5 flex items-center pointer-events-none text-slate-500 group-focus-within:text-blue-400 transition-colors duration-200";
 
 export default function RegisterForm() {
+
+  const router = useRouter();
+
+
   const [showPassword, setShowPassword] = useState(false);
   const [showConfirmPassword, setShowConfirmPassword] = useState(false);
   const [isSubmitting, setIsSubmitting] = useState(false);
@@ -44,11 +51,28 @@ export default function RegisterForm() {
     },
   });
 
-  const handleRegister = async (values: RegisterFormValues) => {
+const handleRegister = async (values: RegisterFormValues) => {
     setIsSubmitting(true);
     try {
-      await new Promise((resolve) => setTimeout(resolve, 1500));
-      console.log("Validated client register request payload:", values);
+      const { data, error } = await authClient.signUp.email({
+        name: values.name,        
+        email: values.email,     
+        password: values.password, 
+       
+      });
+
+      if(data){
+        router.push("/login");
+      }
+
+      if (error) {
+        // Better-Auth কোনো এরর দিলে তা হ্যান্ডেল করুন (যেমন: ইমেইল ইতিমধ্যে ব্যবহার করা হয়েছে)
+        console.error("Auth error:", error.message);
+        // এখানে আপনি চাইলে toast বা কোনো স্টেট দিয়ে ইউজারকে এরর দেখাতে পারেন
+        return;
+      }
+
+      console.log("Registration successful:", data);
     } catch (error) {
       console.error("Registration error boundary caught exception:", error);
     } finally {
@@ -59,6 +83,10 @@ export default function RegisterForm() {
   const handleGoogleRegister = () => {
     console.log("Redirecting to social authentication framework context...");
   };
+
+
+
+
 
   return (
     <div className="relative min-h-screen w-full bg-gradient-to-br from-slate-950 via-slate-900 to-slate-950 flex items-center justify-center p-4 overflow-y-auto">

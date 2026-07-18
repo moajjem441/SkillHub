@@ -2,11 +2,14 @@
 
 import React, { useState } from "react";
 import Link from "next/link";
+import { useRouter } from "next/navigation";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import * as z from "zod";
+import toast from "react-hot-toast";
 import { FiMail, FiLock, FiEye, FiEyeOff, FiArrowRight, FiCheckCircle } from "react-icons/fi";
 import { FcGoogle } from "react-icons/fc";
+import { authClient } from "@/lib/auth-client";
 
 // 🎨 Zod Schema
 const loginSchema = z.object({
@@ -21,7 +24,7 @@ const loginSchema = z.object({
 
 type LoginFormValues = z.infer<typeof loginSchema>;
 
-// 🎨 Premium Dark Theme Input Styles (Same as RegisterForm)
+// 🎨 Premium Dark Theme Input Styles
 const inputBaseStyles = `
   w-full h-11 pl-10 pr-4 py-2.5 
   bg-slate-800/60 backdrop-blur-sm
@@ -39,6 +42,7 @@ const getInputStateStyles = (hasError: boolean) => hasError
 const iconContainerStyles = "absolute inset-y-0 left-3.5 flex items-center pointer-events-none text-slate-500 group-focus-within:text-blue-400 transition-colors duration-200";
 
 export default function LoginForm() {
+  const router = useRouter();
   const [showPassword, setShowPassword] = useState(false);
   const [isSubmitting, setIsSubmitting] = useState(false);
 
@@ -56,23 +60,51 @@ export default function LoginForm() {
 
   const handleLogin = async (values: LoginFormValues) => {
     setIsSubmitting(true);
-    try {
-      await new Promise((resolve) => setTimeout(resolve, 1500));
-      console.log("Validated client login request payload:", values);
 
-      /* 
-       * TODO: Better Auth Sign-In Integration
-       * ---------------------------------------------------------
-       * import { authClient } from "@/lib/auth-client";
-       * 
-       * const { data, error } = await authClient.signIn.email({
-       *   email: values.email,
-       *   password: values.password,
-       *   callbackURL: "/dashboard" 
-       * });
-       */
+    // 🟡 লোডিং টোস্ট দেখান
+    const loadingToast = toast.loading("Logging in...", {
+      style: {
+        background: "rgba(15, 23, 42, 0.95)",
+        backdropFilter: "blur(12px)",
+        border: "1px solid rgba(59, 130, 246, 0.3)",
+        borderRadius: "12px",
+        color: "#f8fafc",
+      },
+    });
+
+    try {
+      const { data, error } = await authClient.signIn.email({
+        email: values.email,
+        password: values.password,
+      });
+
+      if (error) {
+        // ❌ Better Auth থেকে এরর মেসেজ
+        toast.error(error.message || "Invalid email or password. Please try again.", {
+          id: loadingToast,
+          duration: 5000,
+        });
+        return;
+      }
+
+      if (data) {
+        // ✅ সাফল্য টোস্ট
+        toast.success("Welcome back to our SkillHub!... 🎉", {
+          id: loadingToast,
+          duration: 3000,
+        });
+
+        // ড্যাশবোর্ডে রিডাইরেক্ট
+        setTimeout(() => {
+          router.push("/");
+        }, 1500);
+      }
     } catch (error) {
-      console.error("Login error boundary caught exception:", error);
+      console.error("Login error:", error);
+      toast.error("Something went wrong. Please try again later.", {
+        id: loadingToast,
+        duration: 5000,
+      });
     } finally {
       setIsSubmitting(false);
     }

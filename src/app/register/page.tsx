@@ -1,5 +1,5 @@
 import React from "react";
-import RegisterForm from "@/components/RegisterForm";
+import RegisterForm from "@/Components/RegisterForm";
 
 export const metadata = {
   title: "Create Your Account | SkillHub",

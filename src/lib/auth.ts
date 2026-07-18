@@ -2,16 +2,19 @@ import { betterAuth } from "better-auth";
 import { MongoClient } from "mongodb";
 import { mongodbAdapter } from "better-auth/adapters/mongodb";
 
-const client = new MongoClient("mongodb://localhost:27017/database");
-const db = client.db();
+const uri = process.env.MONGODB_URI;
 
+if (!uri) {
+  throw new Error("MONGODB_URI is missing in environment variables!");
+}
+
+const client = new MongoClient(uri);
+
+// Better-Auth এর জন্য মঙ্গোডিবি ক্লায়েন্ট এবং স্পেসিফিক ডাটাবেজ অবজেক্ট পাস করা
 export const auth = betterAuth({
-  database: mongodbAdapter(db, {
-    // Optional: if you don't provide a client, database transactions won't be enabled.
-    client
-  }),
+  database: mongodbAdapter(client.db("skillhub")), // 👈 এখানে ডাটাবেজের নাম 'skillhub' বা আপনার পছন্দমতো নাম দিন
 
-   emailAndPassword: { 
+  emailAndPassword: { 
     enabled: true, 
   },
 });

@@ -1,6 +1,7 @@
 "use client";
 
 import React from "react";
+import Link from "next/link";
 import { FiStar, FiUser } from "react-icons/fi";
 
 // ১. টাইপস্ক্রিপ্ট ইন্টারফেস
@@ -68,12 +69,12 @@ export default function CourseCard({ course }: CourseCardProps) {
           </div>
           
           {/* কাস্টম ডিজাইনড বাটন */}
-          <button 
-            type="button"
-            className="text-xs font-bold px-4 py-2 bg-blue-500/20 text-blue-400 rounded-xl hover:bg-gradient-to-r hover:from-blue-600 hover:to-indigo-600 hover:text-white transition-all duration-300 border border-blue-500/30 hover:border-transparent"
-          >
-            View Details
-          </button>
+           <Link
+  href={`/courseDetails/${course._id}`}
+  className="text-xs font-bold px-4 py-2 bg-blue-500/20 text-blue-400 rounded-xl hover:bg-gradient-to-r hover:from-blue-600 hover:to-indigo-600 hover:text-white transition-all duration-300 cursor-pointer border border-blue-500/30 hover:border-transparent"
+>
+  View Details
+</Link>
         </div>
       </div>
     </div>

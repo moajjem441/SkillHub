@@ -17,8 +17,10 @@ export default function Navbar() {
   // Navigation Links Definition
   const navItems = [
     { label: "Home", href: "/" },
-    { label: "Courses", href: "/courses" },
+    { label: "Explore Courses", href: "/courses" },
     { label: "Add Course", href: "/add-course" },
+    { label: "About Us", href: "/about" },
+    { label: "Contact Us", href: "/contact" },
    
   ];
 
