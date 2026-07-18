@@ -1,13 +1,13 @@
 "use client";
 
-import React, { useState } from "react";
+import React, { useState, useRef } from "react";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import * as z from "zod";
+import toast from "react-hot-toast";
 import { 
   FiBook, FiUser, FiDollarSign, FiTag, FiAward, 
-  FiClock, FiFileText, FiImage, FiUpload, FiX,
-  FiCheckCircle, FiAlertCircle
+  FiClock, FiFileText, FiImage, FiUpload, FiX
 } from "react-icons/fi";
 
 // 🎨 Zod Schema for Course Validation
@@ -29,7 +29,7 @@ const courseSchema = z.object({
 
 type CourseFormValues = z.infer<typeof courseSchema>;
 
-// 🎨 Input Styles (Same as Register/Login)
+// 🎨 Input Styles
 const inputBaseStyles = `
   w-full h-11 px-4 py-2.5 
   bg-slate-800/60 backdrop-blur-sm
@@ -48,8 +48,7 @@ const labelStyles = "text-[11px] font-bold uppercase tracking-wider text-slate-4
 
 export default function AddCourseForm() {
   const [isSubmitting, setIsSubmitting] = useState(false);
-  const [submitStatus, setSubmitStatus] = useState<"idle" | "success" | "error">("idle");
-  const [submitMessage, setSubmitMessage] = useState("");
+  const formRef = useRef<HTMLFormElement>(null);
 
   const {
     register,
@@ -80,8 +79,18 @@ export default function AddCourseForm() {
 
   const onSubmit = async (data: CourseFormValues) => {
     setIsSubmitting(true);
-    setSubmitStatus("idle");
-    
+
+    // 🟡 লোডিং টোস্ট
+    const loadingToast = toast.loading("Adding course...", {
+      style: {
+        background: "rgba(15, 23, 42, 0.95)",
+        backdropFilter: "blur(12px)",
+        border: "1px solid rgba(59, 130, 246, 0.3)",
+        borderRadius: "12px",
+        color: "#f8fafc",
+      },
+    });
+
     try {
       const response = await fetch(`${process.env.NEXT_PUBLIC_SERVER_URL}/admin/course`, {
         method: "POST",
@@ -97,15 +106,28 @@ export default function AddCourseForm() {
 
       const result = await response.json();
       console.log("Course added successfully:", result);
-      
-      setSubmitStatus("success");
-      setSubmitMessage("Course added successfully! 🎉");
+
+      // ✅ সাফল্য টোস্ট
+      toast.success("Course added successfully! 🎉", {
+        id: loadingToast,
+        duration: 4000,
+      });
+
       reset(); // ফর্ম ক্লিয়ার করুন
-      
+
+      // স্ক্রল ফর্মের শীর্ষে রাখুন (ঐচ্ছিক)
+      if (formRef.current) {
+        formRef.current.scrollIntoView({ behavior: "smooth", block: "start" });
+      }
+
     } catch (error) {
       console.error("Error adding course:", error);
-      setSubmitStatus("error");
-      setSubmitMessage("Failed to add course. Please try again.");
+
+      // ❌ এরর টোস্ট
+      toast.error("Failed to add course. Please try again.", {
+        id: loadingToast,
+        duration: 5000,
+      });
     } finally {
       setIsSubmitting(false);
     }
@@ -128,24 +150,12 @@ export default function AddCourseForm() {
           </p>
         </div>
 
-        {/* Status Messages */}
-        {submitStatus === "success" && (
-          <div className="flex items-center gap-2 p-3 rounded-xl bg-emerald-500/20 border border-emerald-500/30 text-emerald-400 text-sm">
-            <FiCheckCircle className="flex-shrink-0" size={20} />
-            <span>{submitMessage}</span>
-          </div>
-        )}
-        
-        {submitStatus === "error" && (
-          <div className="flex items-center gap-2 p-3 rounded-xl bg-red-500/20 border border-red-500/30 text-red-400 text-sm">
-            <FiAlertCircle className="flex-shrink-0" size={20} />
-            <span>{submitMessage}</span>
-          </div>
-        )}
-        
-
-        <form onSubmit={handleSubmit(onSubmit)} className="space-y-6" noValidate>
-          
+        <form 
+          ref={formRef}
+          onSubmit={handleSubmit(onSubmit)} 
+          className="space-y-6" 
+          noValidate
+        >
           {/* 🏷️ Basic Information Section */}
           <div className="space-y-4">
             <h2 className="text-sm font-bold uppercase tracking-wider text-blue-400 border-b border-slate-700/60 pb-2">
