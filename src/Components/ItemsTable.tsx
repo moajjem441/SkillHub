@@ -2,7 +2,9 @@
 
 import React from "react";
 import Link from "next/link";
-import { FiEye, FiTrash2, FiStar, FiUser } from "react-icons/fi";
+import { useRouter } from "next/navigation";
+import { FiEye, FiTrash2, FiStar, FiUser, FiAlertTriangle, FiPlus } from "react-icons/fi";
+import toast from "react-hot-toast";
 
 interface Course {
   id: string;
@@ -18,15 +20,85 @@ interface Course {
 
 interface ItemsTableProps {
   items: Course[];
-  onDelete: (id: string) => void;
+  onDelete: (id: string) => Promise<void>;
 }
 
 export default function ItemsTable({ items, onDelete }: ItemsTableProps) {
+  const router = useRouter();
+
+  // 🗑️ Delete handler with Premium Toast Confirmation
+  const handleDeleteClick = (id: string, title: string) => {
+    toast.custom(
+      (t) => (
+        <div className="relative w-full max-w-md mx-auto bg-slate-900/95 backdrop-blur-xl border border-slate-700/60 rounded-2xl p-6 shadow-2xl shadow-black/60 transition-all duration-300 animate-in fade-in slide-in-from-top-4">
+          {/* আইকন */}
+          <div className="flex items-center gap-3 mb-3">
+            <div className="w-10 h-10 rounded-full bg-red-500/20 flex items-center justify-center text-red-400">
+              <FiAlertTriangle size={20} />
+            </div>
+            <h3 className="text-white font-bold text-lg">Delete Course?</h3>
+          </div>
+
+          {/* মেসেজ - "Are you sure..." সরানো হয়েছে */}
+          <p className="text-slate-300 text-sm leading-relaxed mb-2">
+            You are about to delete <span className="text-white font-semibold">"{title}"</span>.
+          </p>
+          <p className="text-slate-400 text-xs mb-4">
+            ⚠️ This action cannot be undone. All associated data will be permanently removed.
+          </p>
+
+          {/* বাটন */}
+          <div className="flex gap-3 justify-end">
+            <button
+              onClick={() => toast.dismiss(t.id)}
+              className="px-5 py-2 bg-slate-800/80 hover:bg-slate-700/80 text-slate-300 font-medium rounded-xl text-sm transition-all border border-slate-700/50"
+            >
+              Cancel
+            </button>
+            <button
+              onClick={async () => {
+                toast.dismiss(t.id);
+                try {
+                  await onDelete(id);
+                } catch (error) {
+                  console.error("Delete error:", error);
+                  toast.error("Failed to delete course. Please try again.");
+                }
+              }}
+              className="px-5 py-2 bg-gradient-to-r from-red-600 to-rose-600 hover:from-red-500 hover:to-rose-500 text-white font-bold rounded-xl text-sm transition-all shadow-lg shadow-red-500/30 flex items-center gap-2"
+            >
+              <FiTrash2 size={14} />
+              Yes, Delete
+            </button>
+          </div>
+        </div>
+      ),
+      {
+        duration: Infinity,
+        position: "top-center",
+        style: {
+          background: "transparent",
+          boxShadow: "none",
+          padding: 0,
+        },
+      }
+    );
+  };
+
+  // 🔄 খালি অবস্থায় দেখানোর UI
   if (items.length === 0) {
     return (
       <div className="bg-slate-900/80 border border-slate-700/60 rounded-2xl p-12 text-center">
-        <p className="text-slate-400 text-lg">No courses found</p>
-        <p className="text-slate-500 text-sm mt-1">Click "Add New" to create your first course.</p>
+        <div className="flex flex-col items-center gap-4">
+          <p className="text-slate-400 text-lg">No courses found</p>
+          <button
+            onClick={() => router.push("/admin/courses/add")}
+            className="inline-flex items-center gap-2 bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-500 hover:to-indigo-500 text-white font-bold px-6 py-3 rounded-xl shadow-lg shadow-blue-500/30 transition-all"
+          >
+            <FiPlus size={18} />
+            Add New Course
+          </button>
+        </div>
       </div>
     );
   }
@@ -82,7 +154,7 @@ export default function ItemsTable({ items, onDelete }: ItemsTableProps) {
                   <div className="flex items-center justify-center gap-2">
                     {/* View Button */}
                     <Link
-                      href={`/courseDetails/${ item._id}`}
+                      href={`/courseDetails/${item._id || item.id}`}
                       className="p-2 rounded-xl bg-blue-500/20 text-blue-400 hover:bg-blue-500/40 transition-colors"
                       title="View Details"
                     >
@@ -90,7 +162,7 @@ export default function ItemsTable({ items, onDelete }: ItemsTableProps) {
                     </Link>
                     {/* Delete Button */}
                     <button
-                      onClick={() => onDelete( item._id!)}
+                      onClick={() => handleDeleteClick(item._id || item.id, item.title)}
                       className="p-2 rounded-xl bg-red-500/20 text-red-400 hover:bg-red-500/40 transition-colors"
                       title="Delete Course"
                     >
@@ -108,7 +180,7 @@ export default function ItemsTable({ items, onDelete }: ItemsTableProps) {
       <div className="md:hidden p-4 space-y-4">
         {items.map((item) => (
           <div
-            key={ item._id}
+            key={item._id || item.id}
             className="bg-slate-800/60 border border-slate-700/60 rounded-2xl p-4 space-y-3"
           >
             <div className="flex items-center gap-3">
@@ -142,13 +214,13 @@ export default function ItemsTable({ items, onDelete }: ItemsTableProps) {
 
             <div className="flex items-center gap-3 pt-2 border-t border-slate-700/60">
               <Link
-                href={`/courseDetails/$ item._id}`}
+                href={`/courseDetails/${item._id || item.id}`}
                 className="flex-1 text-center bg-blue-500/20 text-blue-400 hover:bg-blue-500/40 font-bold text-xs py-2 rounded-xl transition-colors"
               >
                 View
               </Link>
               <button
-                onClick={() => onDelete(item._id!)}
+                onClick={() => handleDeleteClick(item._id || item.id, item.title)}
                 className="flex-1 text-center bg-red-500/20 text-red-400 hover:bg-red-500/40 font-bold text-xs py-2 rounded-xl transition-colors"
               >
                 Delete

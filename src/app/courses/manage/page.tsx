@@ -46,10 +46,9 @@ export default function ManageItemsPage() {
     }
   };
 
-  // 🗑️ Delete handler
+  // 🗑️ Delete handler – confirm() সরিয়ে ফেলা হয়েছে!
+  // ItemsTable-ই কনফার্মেশন দেখাবে, তাই এখানে শুধু ডিলিট API কল থাকবে।
   const handleDelete = async (id: string) => {
-    if (!confirm("Are you sure you want to delete this course?")) return;
-
     try {
       const res = await fetch(`${process.env.NEXT_PUBLIC_SERVER_URL}/admin/course/${id}`, {
         method: "DELETE",
@@ -93,7 +92,7 @@ export default function ManageItemsPage() {
           </button>
         </div>
 
-        {/* Table */}
+        {/* Table – ItemsTable ইতিমধ্যে Toast কনফার্মেশন দেখায় */}
         <ItemsTable items={items} onDelete={handleDelete} />
       </div>
     </div>
