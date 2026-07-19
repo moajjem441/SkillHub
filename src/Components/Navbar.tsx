@@ -31,6 +31,7 @@ export default function Navbar() {
     const baseItems = [
       { label: "Home", href: "/" },
       { label: "Explore Courses", href: "/courses" },
+      { label: "My Courses", href: "/my-courses" },
     ];
 
     // 👇 শুধুমাত্র অ্যাডমিনদের জন্য অ্যাডমিন অপশন

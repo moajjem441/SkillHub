@@ -83,6 +83,14 @@ export default function ViewCourses({ courseData }: ViewCoursesProps) {
       return;
     }
 
+    // 2️⃣ অ্যাডমিন চেক (নিরাপত্তার জন্য)
+    if (session.user.role === "admin") {
+      toast.error("Admins cannot enroll in courses.", {
+        duration: 4000,
+      });
+      return;
+    }
+
     setEnrolling(true);
     const loadingToast = toast.loading("Enrolling...", {
       style: {
@@ -109,7 +117,7 @@ export default function ViewCourses({ courseData }: ViewCoursesProps) {
       const result = await response.json();
 
       if (!response.ok) {
-        throw new Error(result.message || "Enrollment failed");
+        throw new Error(result.message || result.error || "Enrollment failed");
       }
 
       // ✅ সফল হলে UI আপডেট
@@ -129,8 +137,21 @@ export default function ViewCourses({ courseData }: ViewCoursesProps) {
     }
   };
 
-  // 🟢 বাটন রেন্ডার করার ফাংশন
+  // 🟢 বাটন রেন্ডার করার ফাংশন (অ্যাডমিন চেক সহ)
   const renderEnrollButton = () => {
+    // ⛔ অ্যাডমিন হলে বাটন ডিজেবল করে দিন
+    if (session?.user?.role === "admin") {
+      return (
+        <button
+          disabled
+          className="w-full py-3 bg-slate-700/50 text-slate-400 font-bold rounded-xl cursor-not-allowed flex items-center justify-center gap-2"
+        >
+          <FiShield className="text-slate-500" size={18} />
+          Admin cannot enroll
+        </button>
+      );
+    }
+
     if (checkingEnrollment) {
       return (
         <button
