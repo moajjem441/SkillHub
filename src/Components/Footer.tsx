@@ -18,6 +18,8 @@ export default function Footer() {
   const quickLinks = [
     { label: "Home", href: "/" },
     { label: "Explore Courses", href: "/courses" },
+    { label: "Add Course", href: "/add-course" },
+    { label: "Manage Courses", href: "/courses/manage" },
     { label: "About Us", href: "/about" },
     { label: "Contact Us", href: "/contact" },
   ];

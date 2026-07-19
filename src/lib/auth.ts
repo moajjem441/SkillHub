@@ -1,6 +1,7 @@
 import { betterAuth } from "better-auth";
 import { MongoClient } from "mongodb";
 import { mongodbAdapter } from "better-auth/adapters/mongodb";
+import { admin } from "better-auth/plugins"; // 👈 অ্যাডমিন প্লাগইন ইম্পোর্ট করুন
 
 const uri = process.env.MONGODB_URI;
 
@@ -9,12 +10,21 @@ if (!uri) {
 }
 
 const client = new MongoClient(uri);
+const db = client.db("skillhub");
 
-// Better-Auth এর জন্য মঙ্গোডিবি ক্লায়েন্ট এবং স্পেসিফিক ডাটাবেজ অবজেক্ট পাস করা
 export const auth = betterAuth({
-  database: mongodbAdapter(client.db("skillhub")), // 👈 এখানে ডাটাবেজের নাম 'skillhub' বা আপনার পছন্দমতো নাম দিন
+  
+  database: mongodbAdapter(db), 
 
   emailAndPassword: { 
     enabled: true, 
   },
+
+
+  plugins: [
+    admin({
+      
+      defaultRole: "user", 
+    })
+  ],
 });
