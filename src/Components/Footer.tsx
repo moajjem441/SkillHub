@@ -5,9 +5,9 @@ import NextLink from "next/link";
 import { Link, Button } from "@heroui/react";
 import { FiBookOpen, FiArrowUp, FiMail, FiPhone, FiMapPin } from "react-icons/fi";
 import { FaGithub, FaLinkedin, FaTwitter, FaFacebook } from "react-icons/fa";
+import { authClient } from "@/lib/auth-client";
 
 export default function Footer() {
-  // Smooth scroll helper function
   const scrollToTop = () => {
     window.scrollTo({
       top: 0,
@@ -15,11 +15,23 @@ export default function Footer() {
     });
   };
 
+  const { data: session } = authClient.useSession();
+
+  // 🔥 Role-based Quick Links (My Courses + Admin Links)
   const quickLinks = [
     { label: "Home", href: "/" },
     { label: "Explore Courses", href: "/courses" },
-    { label: "Add Course", href: "/add-course" },
-    { label: "Manage Courses", href: "/courses/manage" },
+    // 👇 শুধুমাত্র সাধারণ ইউজারদের জন্য My Courses
+    ...(session && session.user?.role !== "admin"
+      ? [{ label: "My Courses", href: "/my-courses" }]
+      : []),
+    // 👇 শুধুমাত্র অ্যাডমিনদের জন্য
+    ...(session?.user?.role === "admin"
+      ? [
+          { label: "Add Course", href: "/add-course" },
+          { label: "Manage Courses", href: "/courses/manage" },
+        ]
+      : []),
     { label: "About Us", href: "/about" },
     { label: "Contact Us", href: "/contact" },
   ];
@@ -33,7 +45,6 @@ export default function Footer() {
 
   return (
     <footer className="w-full border-t border-slate-700/60 bg-slate-900/80 backdrop-blur-xl">
-      {/* Top Section: Main Content Grid */}
       <div className="mx-auto max-w-7xl px-4 py-12 sm:px-6 lg:px-8 lg:py-16">
         <div className="grid grid-cols-1 gap-8 md:grid-cols-2 lg:grid-cols-5">
           
@@ -48,7 +59,6 @@ export default function Footer() {
             <p className="text-sm text-slate-400 max-w-xs leading-relaxed">
               Empowering developers and creators worldwide with top-tier, production-ready curriculum and interactive learning environments.
             </p>
-            {/* Social Icons */}
             <div className="flex items-center gap-3 pt-2">
               <Button isIconOnly variant="flat" radius="lg" size="sm" aria-label="Github" className="text-slate-400 hover:text-blue-400 transition-colors bg-transparent border border-slate-700/60 hover:border-blue-500/50">
                 <FaGithub size={16} />
@@ -115,14 +125,11 @@ export default function Footer() {
         </div>
       </div>
 
-      {/* Bottom Section: Copyright & Utilities */}
       <div className="border-t border-slate-700/60 bg-slate-900/50 backdrop-blur-sm">
         <div className="mx-auto max-w-7xl px-4 py-6 sm:px-6 lg:px-8 flex flex-col sm:flex-row items-center justify-between gap-4">
           <p className="text-xs text-slate-500 text-center sm:text-left">
             &copy; {new Date().getFullYear()} SkillHub Inc. All rights reserved.
           </p>
-          
-          {/* Back To Top Action */}
           <Button
             onClick={scrollToTop}
             variant="flat"
