@@ -2,16 +2,29 @@
 
 import React, { useState } from "react";
 import Link from "next/link";
+import { useRouter } from "next/navigation";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
+import * as z from "zod";
+import toast from "react-hot-toast";
 import { FiUser, FiMail, FiLock, FiEye, FiEyeOff, FiArrowRight, FiCheckCircle } from "react-icons/fi";
 import { FcGoogle } from "react-icons/fc";
-import { registerSchema, RegisterFormValues } from "@/schemas/auth";
 import { authClient } from "@/lib/auth-client";
 
-import { useRouter } from "next/navigation";
+// 🛡️ Zod Schema (Role বাদ)
+const registerSchema = z.object({
+  name: z.string().min(2, { message: "Name must be at least 2 characters." }),
+  email: z.string().email({ message: "Please enter a valid email." }),
+  password: z.string().min(6, { message: "Password must be at least 6 characters." }),
+  confirmPassword: z.string().min(1, { message: "Please confirm your password." }),
+}).refine((data) => data.password === data.confirmPassword, {
+  message: "Passwords do not match.",
+  path: ["confirmPassword"],
+});
 
+type RegisterFormValues = z.infer<typeof registerSchema>;
 
+// 🎨 Input Styles
 const inputBaseStyles = `
   w-full h-11 pl-10 pr-4 py-2.5 
   bg-slate-800/60 backdrop-blur-sm
@@ -29,10 +42,7 @@ const getInputStateStyles = (hasError: boolean) => hasError
 const iconContainerStyles = "absolute inset-y-0 left-3.5 flex items-center pointer-events-none text-slate-500 group-focus-within:text-blue-400 transition-colors duration-200";
 
 export default function RegisterForm() {
-
   const router = useRouter();
-
-
   const [showPassword, setShowPassword] = useState(false);
   const [showConfirmPassword, setShowConfirmPassword] = useState(false);
   const [isSubmitting, setIsSubmitting] = useState(false);
@@ -51,48 +61,62 @@ export default function RegisterForm() {
     },
   });
 
-const handleRegister = async (values: RegisterFormValues) => {
+  const handleRegister = async (values: RegisterFormValues) => {
     setIsSubmitting(true);
+
+    const loadingToast = toast.loading("Creating account...", {
+      style: {
+        background: "rgba(15, 23, 42, 0.95)",
+        backdropFilter: "blur(12px)",
+        border: "1px solid rgba(59, 130, 246, 0.3)",
+        borderRadius: "12px",
+        color: "#f8fafc",
+      },
+    });
+
     try {
       const { data, error } = await authClient.signUp.email({
-        name: values.name,        
-        email: values.email,     
-        password: values.password, 
-       
+        name: values.name,
+        email: values.email,
+        password: values.password,
+        // 👇 Role পাঠাচ্ছি না – Better Auth নিজে `defaultRole: "user"` সেট করবে
+        callbackURL: "/login",
       });
 
-      if(data){
-        router.push("/login");
-      }
-
       if (error) {
-        // Better-Auth কোনো এরর দিলে তা হ্যান্ডেল করুন (যেমন: ইমেইল ইতিমধ্যে ব্যবহার করা হয়েছে)
-        console.error("Auth error:", error.message);
-        // এখানে আপনি চাইলে toast বা কোনো স্টেট দিয়ে ইউজারকে এরর দেখাতে পারেন
+        toast.error(error.message || "Registration failed. Please try again.", {
+          id: loadingToast,
+          duration: 5000,
+        });
         return;
       }
 
-      console.log("Registration successful:", data);
+      toast.success("Account created successfully! Please log in. 🎉", {
+        id: loadingToast,
+        duration: 4000,
+      });
+
+      router.push("/login");
     } catch (error) {
-      console.error("Registration error boundary caught exception:", error);
+      console.error("Registration error:", error);
+      toast.error("Something went wrong. Please try again.", {
+        id: loadingToast,
+        duration: 5000,
+      });
     } finally {
       setIsSubmitting(false);
     }
   };
 
   const handleGoogleRegister = () => {
-    console.log("Redirecting to social authentication framework context...");
+    console.log("Redirecting to Google authentication...");
   };
-
-
-
-
 
   return (
     <div className="relative min-h-screen w-full bg-gradient-to-br from-slate-950 via-slate-900 to-slate-950 flex items-center justify-center p-4 overflow-y-auto">
       <div className="w-full max-w-xl bg-slate-900/80 backdrop-blur-xl border border-slate-700/60 rounded-3xl p-6 md:p-8 shadow-2xl shadow-black/40 space-y-6 transition-all">
         
-        {/* Platform Branding Heading */}
+        {/* Branding */}
         <div className="space-y-2 text-center">
           <div className="mx-auto w-12 h-12 rounded-2xl bg-gradient-to-tr from-blue-500 to-indigo-500 flex items-center justify-center text-white font-black text-xl shadow-lg shadow-blue-500/30">
             S
@@ -101,19 +125,15 @@ const handleRegister = async (values: RegisterFormValues) => {
             Create your account
           </h1>
           <p className="text-xs md:text-sm text-slate-400 font-medium max-w-xs mx-auto">
-            Join the SkillHub platform to access specialized workspaces and build your engineering profile.
+            Join the SkillHub platform and start learning.
           </p>
         </div>
 
-        {/* Main Registration Input Interface */}
         <form onSubmit={handleSubmit(handleRegister)} className="space-y-5" noValidate>
           
-          {/* Full Name Input Block */}
+          {/* Name */}
           <div className="space-y-1.5">
-            <label 
-              htmlFor="name"
-              className="text-[11px] font-bold uppercase tracking-wider text-slate-400 block text-left select-none"
-            >
+            <label htmlFor="name" className="text-[11px] font-bold uppercase tracking-wider text-slate-400 block text-left select-none">
               Full Name
             </label>
             <div className="relative group">
@@ -138,12 +158,9 @@ const handleRegister = async (values: RegisterFormValues) => {
             )}
           </div>
 
-          {/* Email Address Input Block */}
+          {/* Email */}
           <div className="space-y-1.5">
-            <label 
-              htmlFor="email"
-              className="text-[11px] font-bold uppercase tracking-wider text-slate-400 block text-left select-none"
-            >
+            <label htmlFor="email" className="text-[11px] font-bold uppercase tracking-wider text-slate-400 block text-left select-none">
               Email Address
             </label>
             <div className="relative group">
@@ -168,15 +185,10 @@ const handleRegister = async (values: RegisterFormValues) => {
             )}
           </div>
 
-          {/* Security Tokens Grouting Structure */}
+          {/* Password & Confirm Password */}
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-            
-            {/* Password Input Component */}
             <div className="space-y-1.5">
-              <label 
-                htmlFor="password"
-                className="text-[11px] font-bold uppercase tracking-wider text-slate-400 block text-left select-none"
-              >
+              <label htmlFor="password" className="text-[11px] font-bold uppercase tracking-wider text-slate-400 block text-left select-none">
                 Password
               </label>
               <div className="relative group">
@@ -209,12 +221,8 @@ const handleRegister = async (values: RegisterFormValues) => {
               )}
             </div>
 
-            {/* Confirm Password Input Component */}
             <div className="space-y-1.5">
-              <label 
-                htmlFor="confirmPassword"
-                className="text-[11px] font-bold uppercase tracking-wider text-slate-400 block text-left select-none"
-              >
+              <label htmlFor="confirmPassword" className="text-[11px] font-bold uppercase tracking-wider text-slate-400 block text-left select-none">
                 Confirm Password
               </label>
               <div className="relative group">
@@ -248,7 +256,9 @@ const handleRegister = async (values: RegisterFormValues) => {
             </div>
           </div>
 
-          {/* Action Form Direct Trigger */}
+          {/* ✅ Role ফিল্ড সরিয়ে ফেলা হয়েছে */}
+
+          {/* Submit */}
           <button
             type="submit"
             disabled={isSubmitting}
@@ -259,14 +269,14 @@ const handleRegister = async (values: RegisterFormValues) => {
           </button>
         </form>
 
-        {/* Visual Midpoint Separation Divider */}
+        {/* Divider */}
         <div className="relative flex py-1 items-center text-xs text-slate-500 font-bold uppercase tracking-widest">
           <div className="flex-grow border-t border-slate-700"></div>
           <span className="flex-shrink mx-4">or continue with</span>
           <div className="flex-grow border-t border-slate-700"></div>
         </div>
 
-        {/* Federated Identity Provider Blocks */}
+        {/* Google */}
         <div className="w-full">
           <button
             type="button"
@@ -278,7 +288,7 @@ const handleRegister = async (values: RegisterFormValues) => {
           </button>
         </div>
 
-        {/* Direct route alternative redirect linkage */}
+        {/* Login Link */}
         <p className="text-center text-xs font-medium text-slate-400">
           Already have an account?{" "}
           <Link 

@@ -1,11 +1,14 @@
 "use client";
 
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import Link from "next/link";
+import { useRouter } from "next/navigation";
+import { authClient } from "@/lib/auth-client";
+import toast from "react-hot-toast";
 import { 
   FiStar, FiUser, FiLayers, FiClock, FiVideo, 
   FiSmartphone, FiAward, FiCheckCircle, FiBookOpen, 
-  FiShield, FiArrowRight 
+  FiShield, FiArrowRight, FiLogIn 
 } from "react-icons/fi";
 
 // 🎯 TypeScript Interface for Course Data
@@ -35,6 +38,141 @@ interface ViewCoursesProps {
 
 export default function ViewCourses({ courseData }: ViewCoursesProps) {
   const [activeTab, setActiveTab] = useState<"overview" | "curriculum">("overview");
+  const [enrolling, setEnrolling] = useState(false);
+  const [isEnrolled, setIsEnrolled] = useState(false);
+  const [checkingEnrollment, setCheckingEnrollment] = useState(true);
+  const router = useRouter();
+
+  // Better Auth session
+  const { data: session, isPending } = authClient.useSession();
+
+  // 🔍 চেক করা – ইউজার ইতিমধ্যে এনরোল করেছে কিনা
+  useEffect(() => {
+    const checkEnrollment = async () => {
+      if (!session?.user?.id) {
+        setCheckingEnrollment(false);
+        return;
+      }
+
+      try {
+        const res = await fetch(
+          `${process.env.NEXT_PUBLIC_SERVER_URL}/check-enrollment?courseId=${courseData.id}&userId=${session.user.id}`
+        );
+        const data = await res.json();
+        if (data.success) {
+          setIsEnrolled(data.enrolled);
+        }
+      } catch (error) {
+        console.error("Error checking enrollment:", error);
+      } finally {
+        setCheckingEnrollment(false);
+      }
+    };
+
+    checkEnrollment();
+  }, [session, courseData.id]);
+
+  // 🔥 Enroll Handler
+  const handleEnroll = async () => {
+    // 1️⃣ লগইন চেক
+    if (!session) {
+      toast.error("Please login to enroll in this course.", {
+        duration: 4000,
+      });
+      router.push("/login");
+      return;
+    }
+
+    setEnrolling(true);
+    const loadingToast = toast.loading("Enrolling...", {
+      style: {
+        background: "rgba(15, 23, 42, 0.95)",
+        backdropFilter: "blur(12px)",
+        border: "1px solid rgba(59, 130, 246, 0.3)",
+        borderRadius: "12px",
+        color: "#f8fafc",
+      },
+    });
+
+    try {
+      const response = await fetch(`${process.env.NEXT_PUBLIC_SERVER_URL}/enroll`, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          userId: session.user.id,
+          courseId: courseData.id,
+        }),
+      });
+
+      const result = await response.json();
+
+      if (!response.ok) {
+        throw new Error(result.message || "Enrollment failed");
+      }
+
+      // ✅ সফল হলে UI আপডেট
+      setIsEnrolled(true);
+      toast.success("Successfully enrolled! 🎉", {
+        id: loadingToast,
+        duration: 4000,
+      });
+    } catch (error: any) {
+      console.error("Enroll error:", error);
+      toast.error(error.message || "Failed to enroll. Please try again.", {
+        id: loadingToast,
+        duration: 5000,
+      });
+    } finally {
+      setEnrolling(false);
+    }
+  };
+
+  // 🟢 বাটন রেন্ডার করার ফাংশন
+  const renderEnrollButton = () => {
+    if (checkingEnrollment) {
+      return (
+        <button
+          disabled
+          className="w-full py-3 bg-slate-700/50 text-slate-400 font-bold rounded-xl cursor-not-allowed flex items-center justify-center gap-2"
+        >
+          <span className="animate-spin">⏳</span> Checking...
+        </button>
+      );
+    }
+
+    if (isEnrolled) {
+      return (
+        <button
+          disabled
+          className="w-full py-3 bg-slate-700/60 text-slate-300 font-bold rounded-xl cursor-not-allowed flex items-center justify-center gap-2"
+        >
+          <FiCheckCircle className="text-emerald-400" size={18} />
+          Already Enrolled
+        </button>
+      );
+    }
+
+    return (
+      <button
+        onClick={handleEnroll}
+        disabled={enrolling}
+        className="w-full py-3 bg-gradient-to-r from-emerald-600 to-teal-600 hover:from-emerald-500 hover:to-teal-500 disabled:opacity-60 text-white font-bold rounded-xl text-sm shadow-lg shadow-emerald-500/30 transition-all flex items-center justify-center gap-2 cursor-pointer border-none active:scale-[0.98]"
+      >
+        {enrolling ? (
+          <>
+            <span className="animate-spin">⏳</span> Enrolling...
+          </>
+        ) : (
+          <>
+            <FiLogIn size={18} />
+            Enroll Now
+          </>
+        )}
+      </button>
+    );
+  };
 
   return (
     <div className="w-full text-slate-100 pb-20">
@@ -217,9 +355,13 @@ export default function ViewCourses({ courseData }: ViewCoursesProps) {
             </div>
           </div>
 
-          <button type="button" className="w-full py-3 bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-500 hover:to-indigo-500 text-white font-bold rounded-xl text-xs sm:text-sm shadow-lg shadow-blue-500/30 hover:shadow-blue-500/40 transition-all flex items-center justify-center gap-2 cursor-pointer border-none active:scale-[0.98]">
+          {/* 🟢 Enroll Button (Dynamic) */}
+          {renderEnrollButton()}
+
+          {/* Initialize Purchase Button (commented out) */}
+          {/* <button type="button" className="w-full py-3 bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-500 hover:to-indigo-500 text-white font-bold rounded-xl text-xs sm:text-sm shadow-lg shadow-blue-500/30 hover:shadow-blue-500/40 transition-all flex items-center justify-center gap-2 cursor-pointer border-none active:scale-[0.98]">
             Initialize Purchase <FiArrowRight />
-          </button>
+          </button> */}
           
           <div className="text-[10px] font-medium text-slate-500 text-center flex items-center justify-center gap-1.5">
             <FiShield className="text-blue-400" /> 30-Day Automated Micro-Refund Standard Secure Link

@@ -1,22 +1,20 @@
 "use client";
 
-import  { useState } from "react";
+import { useState } from "react";
 import { usePathname } from "next/navigation";
 import NextLink from "next/link";
 import { Link, Button } from "@heroui/react";
 import { FiBookOpen, FiMenu, FiX } from "react-icons/fi";
 import { useRouter } from "next/navigation";
-import { authClient } from "@/lib/auth-client"; // Better-Auth ক্লায়েন্ট ইম্পোর্ট
+import { authClient } from "@/lib/auth-client";
 
 export default function Navbar() {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const pathname = usePathname();
   const router = useRouter();
 
-  // Better-Auth থেকে সেশন ডেটা রিড করা হচ্ছে
   const { data: session, isPending } = authClient.useSession();
 
-  // সাইন-আউট হ্যান্ডলার
   const handleSignOut = async () => {
     await authClient.signOut({
       fetchOptions: {
@@ -28,24 +26,37 @@ export default function Navbar() {
     });
   };
 
-  // Navigation Links Definition
-  const navItems = [
-    { label: "Home", href: "/" },
-    { label: "Explore Courses", href: "/courses" },
-    { label: "Add Course", href: "/add-course" },
-    { label: "Manage Courses", href: "/courses/manage" },
-    { label: "About Us", href: "/about" },
-    { label: "Contact Us", href: "/contact" },
-  ];
+  // 🔥 Role-based Navigation Items
+  const getNavItems = () => {
+    const baseItems = [
+      { label: "Home", href: "/" },
+      { label: "Explore Courses", href: "/courses" },
+    ];
+
+    // 👇 শুধুমাত্র অ্যাডমিনদের জন্য অ্যাডমিন অপশন
+    const authItems =
+      session && session.user?.role === "admin"
+        ? [
+            { label: "Add Course", href: "/add-course" },
+            { label: "Manage Courses", href: "/courses/manage" },
+          ]
+        : [];
+
+    const endItems = [
+      { label: "About Us", href: "/about" },
+      { label: "Contact Us", href: "/contact" },
+    ];
+
+    return [...baseItems, ...authItems, ...endItems];
+  };
+
+  const navItems = getNavItems();
 
   return (
     <nav className="sticky top-0 z-50 w-full border-b border-slate-700/60 bg-slate-900/80 backdrop-blur-xl">
-      {/* Main Container Header */}
       <header className="mx-auto flex h-16 max-w-7xl items-center justify-between px-4 sm:px-6 lg:px-8">
-        
-        {/* --- LEFT: LOGO SECTION --- */}
+        {/* LEFT: LOGO */}
         <div className="flex items-center gap-2">
-          {/* Mobile Hamburger Menu Toggle */}
           <button
             onClick={() => setIsMenuOpen(!isMenuOpen)}
             className="inline-flex items-center justify-center p-2 rounded-lg text-slate-400 hover:text-slate-100 sm:hidden focus:outline-none transition-colors"
@@ -62,7 +73,7 @@ export default function Navbar() {
           </NextLink>
         </div>
 
-        {/* --- CENTER: DESKTOP NAVIGATION LINKS --- */}
+        {/* CENTER: DESKTOP NAV */}
         <ul className="hidden sm:flex items-center gap-6">
           {navItems.map((item) => {
             const isActive = pathname === item.href;
@@ -72,8 +83,8 @@ export default function Navbar() {
                   as={NextLink}
                   href={item.href}
                   className={`text-sm font-medium transition-colors ${
-                    isActive 
-                      ? "text-blue-400 font-semibold" 
+                    isActive
+                      ? "text-blue-400 font-semibold"
                       : "text-slate-400 hover:text-white"
                   }`}
                 >
@@ -84,13 +95,11 @@ export default function Navbar() {
           })}
         </ul>
 
-        {/* --- RIGHT: ACTIONS (DYNAMIC AUTH INTERFACE) --- */}
+        {/* RIGHT: AUTH ACTIONS */}
         <div className="flex items-center gap-3">
           {isPending ? (
-            // সেশন লোড হওয়ার সময় একটি ছোট ডামি লোডার স্কেলেটন
             <div className="w-8 h-8 rounded-full bg-slate-800 animate-pulse" />
           ) : session ? (
-            // ইউজার লগইন থাকলে ডেস্কটপে এই প্রোফাইল ও সাইন আউট বাটন দেখাবে
             <div className="flex items-center gap-3">
               <div className="flex items-center gap-2">
                 {session.user.image ? (
@@ -108,7 +117,6 @@ export default function Navbar() {
                   {session.user.name}
                 </span>
               </div>
-              
               <Button
                 onClick={handleSignOut}
                 variant="light"
@@ -119,7 +127,6 @@ export default function Navbar() {
               </Button>
             </div>
           ) : (
-            // ইউজার লগইন না থাকলে ডিফল্ট বাটনগুলো দেখাবে
             <>
               <Button
                 onClick={() => router.push("/login")}
@@ -129,7 +136,6 @@ export default function Navbar() {
               >
                 Login
               </Button>
-
               <Button
                 onClick={() => router.push("/register")}
                 color="primary"
@@ -144,7 +150,7 @@ export default function Navbar() {
         </div>
       </header>
 
-      {/* --- MOBILE DRAWDOWN / MENU OVERLAY --- */}
+      {/* MOBILE DRAWER */}
       {isMenuOpen && (
         <div className="sm:hidden border-t border-slate-700/60 bg-slate-900/90 backdrop-blur-xl px-4 py-4 space-y-3 animate-in fade-in slide-in-from-top-2 duration-200">
           <ul className="space-y-2">
@@ -166,11 +172,9 @@ export default function Navbar() {
               );
             })}
           </ul>
-          
-          {/* Mobile Auth Configuration Block */}
+
           <div className="pt-4 border-t border-slate-700/60 flex flex-col gap-2">
             {!isPending && session ? (
-              // মোবাইলের ভেতরে লগইন থাকা অবস্থায় লেআউট
               <>
                 <div className="flex items-center gap-2 px-2 py-1">
                   {session.user.image ? (
@@ -196,7 +200,6 @@ export default function Navbar() {
                 </Button>
               </>
             ) : (
-              // মোবাইলের ভেতরে লগআউট থাকা অবস্থায় লেআউট
               <>
                 <Button
                   as={NextLink}
