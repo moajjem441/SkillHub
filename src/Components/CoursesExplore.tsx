@@ -3,10 +3,12 @@
 import React, { useState, useEffect, useMemo } from "react";
 import Link from "next/link";
 import { FiSearch, FiStar, FiUser, FiSliders, FiChevronLeft, FiChevronRight, FiRefreshCw } from "react-icons/fi";
+import Recommendations from "@/Components/Recommendations"; // 👈 ১. যোগ করা হয়েছে
 
 // 1. TypeScript Contract
 export interface Course {
   id: string;
+  _id?: string; // MongoDB থেকে আসতে পারে
   title: string;
   instructor: string;
   rating: number;
@@ -19,110 +21,17 @@ export interface Course {
 const ITEMS_PER_PAGE = 4;
 
 export default function CoursesExplore() {
+  const [courses, setCourses] = useState<Course[]>([]);
 
-
-
-//     {
-//       id: "c-1",
-//       title: "Complete Next.js Enterprise Starter Guide (v16+)",
-//       instructor: "Moajjem Hossain",
-//       rating: 4.9,
-//       price: 99,
-//       category: "Web Development",
-//       level: "Advanced",
-//       imageUrl: "https://images.unsplash.com/photo-1555066931-4365d14bab8c?auto=format&fit=crop&w=600&q=80", 
-//     },
-//     {
-//       id: "c-2",
-//       title: "Flutter & React Native: Ultimate Cross-Platform Guide",
-//       instructor: "Dr. Angela Yu",
-//       rating: 4.8,
-//       price: 89,
-//       category: "App Development",
-//       level: "Intermediate",
-//       imageUrl: "https://images.unsplash.com/photo-1512941937669-90a1b58e7e9c?auto=format&fit=crop&w=600&q=80",
-//     },
-//     {
-//       id: "c-3",
-//       title: "Multimodal Deep Learning & Computer Vision Foundations",
-//       instructor: "Prof. Andrew Ng",
-//       rating: 4.9,
-//       price: 149,
-//       category: "Artificial Intelligence",
-//       level: "Advanced",
-//       imageUrl: "https://images.unsplash.com/photo-1620712943543-bcc4688e7485?auto=format&fit=crop&w=600&q=80",
-//     },
-//     {
-//       id: "c-4",
-//       title: "Advanced Penetration Testing & Secure IAM Systems",
-//       instructor: "Nathaniel Cole",
-//       rating: 4.7,
-//       price: 119,
-//       category: "Cyber Security",
-//       level: "Advanced",
-//       imageUrl: "https://images.unsplash.com/photo-1550751827-4bd374c3f58b?auto=format&fit=crop&w=600&q=80",
-//     },
-//     {
-//       id: "c-5",
-//       title: "React Core Internals & Advanced State Architecture",
-//       instructor: "Dan Abramov",
-//       rating: 4.9,
-//       price: 79,
-//       category: "Web Development",
-//       level: "Advanced",
-//       imageUrl: "https://images.unsplash.com/photo-1633356122544-f134324a6cee?auto=format&fit=crop&w=600&q=80",
-//     },
-//     {
-//       id: "c-6",
-//       title: "Tailwind CSS Production UI Systems & Engineering",
-//       instructor: "Adam Wathan",
-//       rating: 4.8,
-//       price: 49,
-//       category: "Web Development",
-//       level: "Beginner",
-//       imageUrl: "https://images.unsplash.com/photo-1507238691740-187a5b1d37b8?auto=format&fit=crop&w=600&q=80",
-//     },
-//     {
-//       id: "c-7",
-//       title: "iOS 19 & Swift UI Architecture Masterclass",
-//       instructor: "Paul Hudson",
-//       rating: 4.6,
-//       price: 129,
-//       category: "App Development",
-//       level: "Intermediate",
-//       imageUrl: "https://images.unsplash.com/photo-1551288049-bebda4e38f71?auto=format&fit=crop&w=600&q=80",
-//     },
-//     {
-//       id: "c-8",
-//       title: "Introduction to Cloud-Native Fog Architecture",
-//       instructor: "Dr. Architectural Expert",
-//       rating: 4.5,
-//       price: 159,
-//       category: "Cloud Computing",
-//       level: "Advanced",
-//       imageUrl: "https://images.unsplash.com/photo-1451187580459-43490279c0fa?auto=format&fit=crop&w=600&q=80",
-//     },
-//   ];
-
-
-const [courses, setCourses] = useState<Course[]>([]);
-
-useEffect(() => {
-  const fetchCourses = async () => {
-    const res = await fetch(`${process.env.NEXT_PUBLIC_SERVER_URL}/courses`);
-    const data = await res.json();
-
-    console.log(data);
-
-    setCourses(data);
-  };
-
-  fetchCourses();
-}, []);
-
-
-
-
+  // 📦 কোর্স লোড
+  useEffect(() => {
+    const fetchCourses = async () => {
+      const res = await fetch(`${process.env.NEXT_PUBLIC_SERVER_URL}/courses`);
+      const data = await res.json();
+      setCourses(data);
+    };
+    fetchCourses();
+  }, []);
 
   // --- UI Filter States ---
   const [searchQuery, setSearchQuery] = useState("");
@@ -172,7 +81,7 @@ useEffect(() => {
     }
 
     return result;
-  }, [courses,searchQuery, selectedCategory, maxPrice, sortBy]);
+  }, [courses, searchQuery, selectedCategory, maxPrice, sortBy]);
 
   const totalPages = Math.ceil(filteredAndSortedCourses.length / ITEMS_PER_PAGE);
   const paginatedCourses = useMemo(() => {
@@ -188,6 +97,23 @@ useEffect(() => {
     setCurrentPage(1);
   };
 
+  // 👈 ২. ইউজার হিস্ট্রি সেভ ফাংশন যোগ করা হয়েছে
+  const saveToHistory = (course: Course) => {
+    const history = JSON.parse(localStorage.getItem("courseHistory") || "[]");
+    const newEntry = {
+      id: course._id || course.id,
+      title: course.title,
+      category: course.category,
+      level: course.level,
+      rating: course.rating,
+      timestamp: new Date().toISOString(),
+    };
+    const filtered = history.filter((item: any) => item.id !== newEntry.id);
+    filtered.unshift(newEntry);
+    if (filtered.length > 20) filtered.pop();
+    localStorage.setItem("courseHistory", JSON.stringify(filtered));
+  };
+
   return (
     <div className="w-full bg-transparent text-slate-100 py-12 px-4">
       <div className="max-w-7xl mx-auto space-y-10">
@@ -201,6 +127,9 @@ useEffect(() => {
             Filter & Find Your Perfect Path
           </h2>
         </div>
+
+        {/* 👈 ৩. AI Recommendation Section যোগ করা হয়েছে */}
+        <Recommendations />
 
         {/* Catalog Blueprint Wrapper Grid */}
         <div className="grid grid-cols-1 lg:grid-cols-4 gap-8 items-start w-full">
@@ -330,7 +259,11 @@ useEffect(() => {
               ) : paginatedCourses.length > 0 ? (
                 <div className="grid grid-cols-1 sm:grid-cols-2 gap-6 w-full">
                   {paginatedCourses.map((course) => (
-                    <CourseCatalogCard key={course.id} course={course} />
+                    <CourseCatalogCard 
+                      key={course.id} 
+                      course={course} 
+                      onView={() => saveToHistory(course)} // 👈 ৪. ইভেন্ট পাস করা হয়েছে
+                    />
                   ))}
                 </div>
               ) : (
@@ -377,8 +310,8 @@ useEffect(() => {
   );
 }
 
-// Reusable Presentation Layer
-function CourseCatalogCard({ course }: { course: Course }) {
+// 👈 ৪. CourseCatalogCard আপডেট (onView প্রপ যোগ)
+function CourseCatalogCard({ course, onView }: { course: Course; onView?: () => void }) {
   return (
     <div className="w-full border border-slate-700/60 hover:border-blue-500/50 bg-slate-900/80 backdrop-blur-xl shadow-xl shadow-black/40 hover:shadow-2xl hover:shadow-blue-500/10 transition-all duration-300 hover:-translate-y-1.5 group rounded-2xl overflow-hidden flex flex-col justify-between text-left cursor-pointer">
       <div className="relative w-full h-44 overflow-hidden bg-slate-800">
@@ -417,12 +350,13 @@ function CourseCatalogCard({ course }: { course: Course }) {
             <span className="text-lg font-black text-white">${course.price}</span>
           </div>
           
-         <Link
-  href={`/courseDetails/${course._id}`}
-  className="text-xs font-bold px-4 py-2 bg-blue-500/20 text-blue-400 rounded-xl hover:bg-gradient-to-r hover:from-blue-600 hover:to-indigo-600 hover:text-white transition-all duration-300 cursor-pointer border border-blue-500/30 hover:border-transparent"
->
-  View Details
-</Link>
+          <Link
+            href={`/courseDetails/${course._id || course.id}`}
+            onClick={onView} // 👈 ৪. onClick ইভেন্ট যোগ করা হয়েছে (হিস্ট্রি সেভ)
+            className="text-xs font-bold px-4 py-2 bg-blue-500/20 text-blue-400 rounded-xl hover:bg-gradient-to-r hover:from-blue-600 hover:to-indigo-600 hover:text-white transition-all duration-300 cursor-pointer border border-blue-500/30 hover:border-transparent"
+          >
+            View Details
+          </Link>
         </div>
       </div>
     </div>
