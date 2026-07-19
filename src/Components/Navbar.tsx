@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useState } from "react";
+import  { useState } from "react";
 import { usePathname } from "next/navigation";
 import NextLink from "next/link";
 import { Link, Button } from "@heroui/react";
@@ -33,6 +33,7 @@ export default function Navbar() {
     { label: "Home", href: "/" },
     { label: "Explore Courses", href: "/courses" },
     { label: "Add Course", href: "/add-course" },
+    { label: "Manage Courses", href: "/courses/manage" },
     { label: "About Us", href: "/about" },
     { label: "Contact Us", href: "/contact" },
   ];

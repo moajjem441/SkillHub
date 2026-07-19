@@ -9,7 +9,8 @@ import toast from "react-hot-toast";
 import { authClient } from "@/lib/auth-client";
 import { 
   FiBook, FiUser, FiDollarSign, FiTag, FiAward, 
-  FiClock, FiFileText, FiImage, FiUpload, FiX
+  FiClock, FiFileText, FiImage, FiUpload, FiX,
+  FiZap // ✅ সঠিক আইকন
 } from "react-icons/fi";
 
 // 🎨 Zod Schema for Course Validation
@@ -52,18 +53,17 @@ export default function AddCourseForm() {
   const router = useRouter();
   const [isCheckingAuth, setIsCheckingAuth] = useState(true);
   const [isSubmitting, setIsSubmitting] = useState(false);
+  const [isGenerating, setIsGenerating] = useState(false);
   const formRef = useRef<HTMLFormElement>(null);
 
-  // 🔐 ১. ইউজার সেশন চেক করুন
+  // 🔐 Session check
   useEffect(() => {
     const checkAuth = async () => {
       try {
         const { data: session } = await authClient.getSession();
         if (!session) {
-          // লগইন না থাকলে লগইন পেজে রিডাইরেক্ট
           router.push("/login");
         } else {
-          // লগইন থাকলে পেজ লোড হতে দিন
           setIsCheckingAuth(false);
         }
       } catch (error) {
@@ -71,7 +71,6 @@ export default function AddCourseForm() {
         router.push("/login");
       }
     };
-
     checkAuth();
   }, [router]);
 
@@ -81,6 +80,7 @@ export default function AddCourseForm() {
     formState: { errors },
     reset,
     watch,
+    setValue, // needed for AI generation
   } = useForm<CourseFormValues>({
     resolver: zodResolver(courseSchema),
     defaultValues: {
@@ -102,10 +102,70 @@ export default function AddCourseForm() {
 
   const watchedImageUrl = watch("imageUrl");
 
+  // ✨ AI Generate function
+ const generateWithAI = async () => {
+  const title = watch("title");
+  const category = watch("category");
+  const level = watch("level");
+
+  if (!title) {
+    toast.error("Please enter a course title first.");
+    return;
+  }
+
+  setIsGenerating(true);
+  const loadingToast = toast.loading("AI is crafting your course content...", {
+    style: {
+      background: "rgba(15, 23, 42, 0.95)",
+      backdropFilter: "blur(12px)",
+      border: "1px solid rgba(59, 130, 246, 0.3)",
+      borderRadius: "12px",
+      color: "#f8fafc",
+    },
+  });
+
+  try {
+    const response = await fetch("/api/ai/generate-course", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({ title, category, level }),
+    });
+
+    const result = await response.json();
+
+    if (!response.ok) {
+      throw new Error(result.error || "Failed to generate");
+    }
+
+    // 🔥 ফর্মের ফিল্ডগুলো পূরণ করুন (price যোগ)
+    setValue("description", result.data.description);
+    setValue("duration", result.data.duration);
+    setValue("lessons", result.data.lessons);
+    setValue("price", result.data.price); // 👈 নতুন যোগ
+
+    console.log("✅ Generated Features:", result.data.features);
+
+    toast.success("Course content generated successfully! 🎉", {
+      id: loadingToast,
+      duration: 3000,
+    });
+  } catch (error) {
+    console.error("AI Generation Error:", error);
+    toast.error(error instanceof Error ? error.message : "Failed to generate content. Please try again.", {
+      id: loadingToast,
+      duration: 4000,
+    });
+  } finally {
+    setIsGenerating(false);
+  }
+};
+
+  // 📤 Submit handler
   const onSubmit = async (data: CourseFormValues) => {
     setIsSubmitting(true);
 
-    // 🟡 লোডিং টোস্ট
     const loadingToast = toast.loading("Adding course...", {
       style: {
         background: "rgba(15, 23, 42, 0.95)",
@@ -132,7 +192,6 @@ export default function AddCourseForm() {
       const result = await response.json();
       console.log("Course added successfully:", result);
 
-      // ✅ সাফল্য টোস্ট
       toast.success("Course added successfully! 🎉", {
         id: loadingToast,
         duration: 4000,
@@ -147,7 +206,6 @@ export default function AddCourseForm() {
     } catch (error) {
       console.error("Error adding course:", error);
 
-      // ❌ এরর টোস্ট
       toast.error("Failed to add course. Please try again.", {
         id: loadingToast,
         duration: 5000,
@@ -157,7 +215,7 @@ export default function AddCourseForm() {
     }
   };
 
-  // 🔄 অথেনটিকেশন চেক শেষ না হলে লোডার দেখান
+  // 🔄 Loading state
   if (isCheckingAuth) {
     return (
       <div className="min-h-screen w-full bg-slate-950 flex items-center justify-center">
@@ -194,9 +252,28 @@ export default function AddCourseForm() {
         >
           {/* 🏷️ Basic Information Section */}
           <div className="space-y-4">
-            <h2 className="text-sm font-bold uppercase tracking-wider text-blue-400 border-b border-slate-700/60 pb-2">
-              Basic Information
-            </h2>
+            <div className="flex items-center justify-between border-b border-slate-700/60 pb-2">
+              <h2 className="text-sm font-bold uppercase tracking-wider text-blue-400">
+                Basic Information
+              </h2>
+              {/* ✨ AI Generate Button */}
+              <button
+                type="button"
+                onClick={generateWithAI}
+                disabled={isGenerating}
+                className="flex items-center gap-1.5 text-xs font-bold text-blue-400 hover:text-blue-300 transition-colors disabled:opacity-50 disabled:cursor-not-allowed bg-blue-500/10 px-3 py-1.5 rounded-xl border border-blue-500/20"
+              >
+                {isGenerating ? (
+                  <>
+                    <span className="animate-spin">⏳</span> Generating...
+                  </>
+                ) : (
+                  <>
+                    <FiZap size={14} /> Generate with AI
+                  </>
+                )}
+              </button>
+            </div>
             
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
               {/* Title */}
