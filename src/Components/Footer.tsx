@@ -1,6 +1,5 @@
 "use client";
 
-import React from "react";
 import NextLink from "next/link";
 import { Link, Button } from "@heroui/react";
 import { FiBookOpen, FiArrowUp, FiMail, FiPhone, FiMapPin } from "react-icons/fi";
