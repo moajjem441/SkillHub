@@ -1,8 +1,9 @@
+// components/Recommendations.tsx
 "use client";
 
 import React, { useState, useEffect } from "react";
 import Link from "next/link";
-import { FiStar, FiUser, FiTrendingUp } from "react-icons/fi";
+import { FiStar, FiUser, FiTrendingUp, FiRefreshCw } from "react-icons/fi";
 
 interface Course {
   id: string;
@@ -19,43 +20,58 @@ interface Course {
 export default function Recommendations() {
   const [recommended, setRecommended] = useState<Course[]>([]);
   const [loading, setLoading] = useState(true);
+  const [refreshing, setRefreshing] = useState(false);
 
-  useEffect(() => {
-    const fetchRecommendations = async () => {
-      try {
-        const history = JSON.parse(localStorage.getItem("courseHistory") || "[]");
-        if (history.length === 0) {
-          setLoading(false);
-          return;
-        }
+  // রেকমেন্ডেশন ফেচ করার ফাংশন
+  const fetchRecommendations = async (showFullLoader = true) => {
+    if (showFullLoader) {
+      setLoading(true);
+    } else {
+      setRefreshing(true);
+    }
 
-        const res = await fetch(`${process.env.NEXT_PUBLIC_SERVER_URL}/courses`);
-        const allCourses = await res.json();
-
-        const recoRes = await fetch("/api/ai/recommend", {
-          method: "POST",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({ history, allCourses }),
-        });
-        const result = await recoRes.json();
-        setRecommended(result.data || []);
-      } catch (error) {
-        console.error("Recommendation error:", error);
+    try {
+      const history = JSON.parse(localStorage.getItem("courseHistory") || "[]");
+      if (history.length === 0) {
         setRecommended([]);
-      } finally {
         setLoading(false);
+        setRefreshing(false);
+        return;
       }
-    };
 
-    fetchRecommendations();
+      const res = await fetch(`${process.env.NEXT_PUBLIC_SERVER_URL}/courses`);
+      const allCourses = await res.json();
+
+      const recoRes = await fetch("/api/ai/recommend", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ history, allCourses }),
+      });
+      const result = await recoRes.json();
+      setRecommended(result.data || []);
+    } catch (error) {
+      console.error("Recommendation error:", error);
+      setRecommended([]);
+    } finally {
+      setLoading(false);
+      setRefreshing(false);
+    }
+  };
+
+  // পেজ লোড হলে অটো ফেচ
+  useEffect(() => {
+    fetchRecommendations(true);
   }, []);
 
+  // লোডিং স্টেট
   if (loading) {
     return (
       <div className="space-y-4">
-        <h2 className="text-xl font-bold text-white flex items-center gap-2">
-          <FiTrendingUp className="text-blue-400" /> Loading recommendations...
-        </h2>
+        <div className="flex items-center justify-between">
+          <h2 className="text-xl font-bold text-white flex items-center gap-2">
+            <FiTrendingUp className="text-blue-400" /> Loading recommendations...
+          </h2>
+        </div>
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
           {[1, 2, 3, 4].map((i) => (
             <div key={i} className="bg-slate-800/60 rounded-xl h-48 animate-pulse" />
@@ -65,6 +81,7 @@ export default function Recommendations() {
     );
   }
 
+  // খালি স্টেট (কোনো হিস্ট্রি না থাকলে)
   if (recommended.length === 0) {
     return (
       <div className="text-center py-8 bg-slate-900/40 rounded-2xl border border-slate-700/60">
@@ -73,11 +90,25 @@ export default function Recommendations() {
     );
   }
 
+  // রেকমেন্ডেশন দেখানোর UI
   return (
     <div className="space-y-4">
-      <h2 className="text-xl font-bold text-white flex items-center gap-2">
-        <FiTrendingUp className="text-blue-400" /> Recommended For You
-      </h2>
+      {/* হেডার + রিফ্রেশ বাটন */}
+      <div className="flex items-center justify-between">
+        <h2 className="text-xl font-bold text-white flex items-center gap-2">
+          <FiTrendingUp className="text-blue-400" /> Recommended For You
+        </h2>
+        <button
+          onClick={() => fetchRecommendations(false)}
+          disabled={refreshing}
+          className="flex items-center gap-1.5 text-xs font-medium text-blue-400 hover:text-blue-300 transition-colors disabled:opacity-50 disabled:cursor-not-allowed bg-blue-500/10 px-3 py-1.5 rounded-xl border border-blue-500/20"
+        >
+          <FiRefreshCw className={refreshing ? "animate-spin" : ""} size={14} />
+          {refreshing ? "Refreshing..." : "Refresh"}
+        </button>
+      </div>
+
+      {/* রেকমেন্ডেড কোর্সের গ্রিড */}
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
         {recommended.map((course) => (
           <Link
