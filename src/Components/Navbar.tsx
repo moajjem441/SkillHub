@@ -31,11 +31,16 @@ export default function Navbar() {
     const baseItems = [
       { label: "Home", href: "/" },
       { label: "Explore Courses", href: "/courses" },
-      { label: "My Courses", href: "/my-courses" },
     ];
 
-    // 👇 শুধুমাত্র অ্যাডমিনদের জন্য অ্যাডমিন অপশন
-    const authItems =
+    // 👇 শুধুমাত্র সাধারণ ইউজারদের জন্য (অ্যাডমিন নয়) – My Courses
+    const userItems =
+      session && session.user?.role !== "admin"
+        ? [{ label: "My Courses", href: "/my-courses" }]
+        : [];
+
+    // 👇 শুধুমাত্র অ্যাডমিনদের জন্য
+    const adminItems =
       session && session.user?.role === "admin"
         ? [
             { label: "Add Course", href: "/add-course" },
@@ -48,7 +53,7 @@ export default function Navbar() {
       { label: "Contact Us", href: "/contact" },
     ];
 
-    return [...baseItems, ...authItems, ...endItems];
+    return [...baseItems, ...userItems, ...adminItems, ...endItems];
   };
 
   const navItems = getNavItems();
