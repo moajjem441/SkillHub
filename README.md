@@ -207,6 +207,39 @@ GROQ_API_KEY=your_groq_api_key
 # Stripe
 NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY=your_stripe_publishable_key
 
+
+
+## 👨‍💻 Author
+
+**Moajjem Hossain**
+- GitHub: [@moajjem](https://github.com/moajjem)
+- Email: moajjem441@gmail.com
+- LinkedIn: [Moajjem Hossain](https://linkedin.com/in/moajjem)
+
+---
+
+## 🙏 Acknowledgments
+
+- [Better Auth](https://better-auth.com/) – Authentication system
+- [Groq](https://groq.com/) – AI API for content generation & recommendations
+- [Stripe](https://stripe.com/) – Payment processing
+- [Nodemailer](https://nodemailer.com/) – Email sending
+- [HeroUI](https://heroui.com/) – UI components
+- [Unsplash](https://unsplash.com/) – Course images
+
+---
+
+## 📬 Contact
+
+For any questions, feedback, or collaboration opportunities, feel free to reach out:
+
+- **Email:** moajjem441@gmail.com
+- **GitHub:** [@moajjem](https://github.com/moajjem)
+
+---
+
+**Built with ❤️ by Moajjem Hossain | © 2026 SkillHub Inc. All rights reserved.**
+
 4.Run development server:
 npm run dev
    ```
