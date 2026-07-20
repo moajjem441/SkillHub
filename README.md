@@ -122,6 +122,7 @@
 | **Nodemailer** | Email sending (Contact Form) |
 | **Groq AI SDK** | AI content generation & recommendations |
 | **Stripe SDK** | Payment processing |
+| **Better Auth** (Client) | Authentication & session management (Email + Google OAuth) |
 
 ---
 
