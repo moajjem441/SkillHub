@@ -72,63 +72,60 @@ export default function ViewCourses({ courseData }: ViewCoursesProps) {
     checkEnrollment();
   }, [session, courseData.id]);
 
-  // 🔥 Enroll Handler
+
+
+
+  // 🔥 Enroll Handler (Stripe Payment) – আপডেটেড ভার্সন
   const handleEnroll = async () => {
     // 1️⃣ লগইন চেক
     if (!session) {
-      toast.error("Please login to enroll in this course.", {
-        duration: 4000,
-      });
+      toast.error("Please login to enroll.", { duration: 4000 });
       router.push("/login");
       return;
     }
 
-    // 2️⃣ অ্যাডমিন চেক (নিরাপত্তার জন্য)
+    // 2️⃣ অ্যাডমিন চেক
     if (session.user.role === "admin") {
-      toast.error("Admins cannot enroll in courses.", {
-        duration: 4000,
-      });
+      toast.error("Admins cannot enroll.", { duration: 4000 });
       return;
     }
 
     setEnrolling(true);
-    const loadingToast = toast.loading("Enrolling...", {
-      style: {
-        background: "rgba(15, 23, 42, 0.95)",
-        backdropFilter: "blur(12px)",
-        border: "1px solid rgba(59, 130, 246, 0.3)",
-        borderRadius: "12px",
-        color: "#f8fafc",
-      },
-    });
+    const loadingToast = toast.loading("Preparing checkout...");
 
     try {
-      const response = await fetch(`${process.env.NEXT_PUBLIC_SERVER_URL}/enroll`, {
+      const payload = {
+        title: courseData.title,
+        price: courseData.price,
+        imageUrl: courseData.gallery[0],
+        id: courseData.id,
+        userId: session.user.id,
+      };
+
+      console.log("📦 Sending to /api/checkout_sessions:", payload);
+
+      const response = await fetch("/api/checkout_sessions", {
         method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({
-          userId: session.user.id,
-          courseId: courseData.id,
-        }),
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(payload),
       });
 
-      const result = await response.json();
+      const data = await response.json();
+      console.log("📨 Response from API:", data);
 
       if (!response.ok) {
-        throw new Error(result.message || result.error || "Enrollment failed");
+        throw new Error(data.error || data.message || "Checkout initialization failed");
       }
 
-      // ✅ সফল হলে UI আপডেট
-      setIsEnrolled(true);
-      toast.success("Successfully enrolled! 🎉", {
-        id: loadingToast,
-        duration: 4000,
-      });
+      if (!data.url) {
+        throw new Error("No checkout URL received from server.");
+      }
+
+      // ✅ Stripe Checkout-এ রিডাইরেক্ট
+      window.location.href = data.url;
     } catch (error: any) {
-      console.error("Enroll error:", error);
-      toast.error(error.message || "Failed to enroll. Please try again.", {
+      console.error("❌ Enroll error:", error);
+      toast.error(error.message || "Something went wrong", {
         id: loadingToast,
         duration: 5000,
       });
@@ -136,6 +133,64 @@ export default function ViewCourses({ courseData }: ViewCoursesProps) {
       setEnrolling(false);
     }
   };
+
+
+
+
+  // 🔥 Enroll Handler (Direct Enrollment – No Payment)
+// const handleEnroll = async () => {
+//   // 1️⃣ লগইন চেক
+//   if (!session) {
+//     toast.error("Please login to enroll.", { duration: 4000 });
+//     router.push("/login");
+//     return;
+//   }
+
+//   // 2️⃣ অ্যাডমিন চেক
+//   if (session.user.role === "admin") {
+//     toast.error("Admins cannot enroll.", { duration: 4000 });
+//     return;
+//   }
+
+//   setEnrolling(true);
+//   const loadingToast = toast.loading("Enrolling...");
+
+//   try {
+//     const response = await fetch(`${process.env.NEXT_PUBLIC_SERVER_URL}/enroll`, {
+//       method: "POST",
+//       headers: { "Content-Type": "application/json" },
+//       body: JSON.stringify({
+//         userId: session.user.id,
+//         courseId: courseData.id,
+//       }),
+//     });
+
+//     const result = await response.json();
+
+//     if (!response.ok) {
+//       throw new Error(result.message || result.error || "Enrollment failed");
+//     }
+
+//     // ✅ সফল হলে UI আপডেট
+//     setIsEnrolled(true);
+//     toast.success("Successfully enrolled! 🎉", {
+//       id: loadingToast,
+//       duration: 4000,
+//     });
+//   } catch (error: any) {
+//     console.error("Enroll error:", error);
+//     toast.error(error.message || "Failed to enroll.", {
+//       id: loadingToast,
+//       duration: 5000,
+//     });
+//   } finally {
+//     setEnrolling(false);
+//   }
+// };
+
+
+
+
 
   // 🟢 বাটন রেন্ডার করার ফাংশন (অ্যাডমিন চেক সহ)
   const renderEnrollButton = () => {
