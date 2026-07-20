@@ -1,5 +1,7 @@
 # 🎓 SkillHub – Production-Grade EdTech Platform
 
+> **Built with ❤️ by [Moajjem Hossain](https://github.com/moajjem)**
+
 [![Next.js](https://img.shields.io/badge/Next.js-16-black?style=flat&logo=next.js)](https://nextjs.org/)
 [![TypeScript](https://img.shields.io/badge/TypeScript-5.0-blue?style=flat&logo=typescript)](https://www.typescriptlang.org/)
 [![Tailwind CSS](https://img.shields.io/badge/Tailwind-3.0-38B2AC?style=flat&logo=tailwind-css)](https://tailwindcss.com/)
