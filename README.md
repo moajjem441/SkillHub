@@ -26,6 +26,7 @@
 > **Test Credentials:**
 > - Email: `test@example.com`
 > - Password: `password123`
+> - **Or** – Sign in with Google
 
 ---
 
