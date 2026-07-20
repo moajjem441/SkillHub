@@ -71,6 +71,12 @@
 - **Webhook Support** – Automatic enrollment upon successful payment
 - **Test Mode** – Use Stripe test cards for development
 
+  ### 📧 Contact & Communication
+- **Contact Form** – Users can send messages directly to the admin via the `/contact` page
+- **Nodemailer Integration** – Sends emails using Gmail SMTP (or any SMTP provider)
+- **HTML Email Templates** – Beautifully formatted emails with user details (name, email, message)
+- **Toast Notifications** – Real-time feedback on form submission (success/error)
+
 ### 🎨 Premium UI/UX
 - **Dark Glassmorphic Design** – Modern, premium dark theme with glass effects
 - **Fully Responsive** – Optimized for mobile, tablet, and desktop
