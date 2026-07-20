@@ -68,13 +68,13 @@ export default function CourseCard({ course }: CourseCardProps) {
             <span className="text-lg font-black text-white">${course.price}</span>
           </div>
           
-          {/* কাস্টম ডিজাইনড বাটন */}
-           <Link
-  href={`/courseDetails/${course._id}`}
-  className="text-xs font-bold px-4 py-2 bg-blue-500/20 text-blue-400 rounded-xl hover:bg-gradient-to-r hover:from-blue-600 hover:to-indigo-600 hover:text-white transition-all duration-300 cursor-pointer border border-blue-500/30 hover:border-transparent"
->
-  View Details
-</Link>
+          {/* ✅ ফিক্স: `course._id` → `course.id` */}
+          <Link
+            href={`/courseDetails/${course.id}`}
+            className="text-xs font-bold px-4 py-2 bg-blue-500/20 text-blue-400 rounded-xl hover:bg-gradient-to-r hover:from-blue-600 hover:to-indigo-600 hover:text-white transition-all duration-300 cursor-pointer border border-blue-500/30 hover:border-transparent"
+          >
+            View Details
+          </Link>
         </div>
       </div>
     </div>

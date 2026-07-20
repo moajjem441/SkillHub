@@ -1,7 +1,7 @@
 // app/contact/page.tsx
 import React from "react";
 import { FiMapPin, FiPhone, FiMail, FiClock } from "react-icons/fi";
-import ContactForm from "@/components/ContactForm";
+import ContactForm from "@/Components/ContactForm";
 
 export const metadata = {
   title: "Contact Us | SkillHub",

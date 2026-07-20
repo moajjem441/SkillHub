@@ -19,6 +19,7 @@ export async function proxy(request: NextRequest) {
 // ৪. কোন রুটগুলোতে এই প্রোক্সি কাজ করবে তা নির্ধারণ করুন
 export const config = {
   matcher: [
-    '/add-course',            // ✅ নতুন যোগ করা রুট
+    '/add-course', 
+    //   '/courses/manage',
   ],
 };

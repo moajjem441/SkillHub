@@ -3,7 +3,6 @@
 import { useState } from "react";
 import { usePathname } from "next/navigation";
 import NextLink from "next/link";
-import { Link, Button } from "@heroui/react";
 import { FiBookOpen, FiMenu, FiX } from "react-icons/fi";
 import { useRouter } from "next/navigation";
 import { authClient } from "@/lib/auth-client";
@@ -26,22 +25,22 @@ export default function Navbar() {
     });
   };
 
-  // 🔥 Role-based Navigation Items
+  // Role-based Navigation (TypeScript-safe)
+  const userRole = (session?.user as any)?.role;
+
   const getNavItems = () => {
     const baseItems = [
       { label: "Home", href: "/" },
       { label: "Explore Courses", href: "/courses" },
     ];
 
-    // 👇 শুধুমাত্র সাধারণ ইউজারদের জন্য (অ্যাডমিন নয়) – My Courses
     const userItems =
-      session && session.user?.role !== "admin"
+      session && userRole !== "admin"
         ? [{ label: "My Courses", href: "/my-courses" }]
         : [];
 
-    // 👇 শুধুমাত্র অ্যাডমিনদের জন্য
     const adminItems =
-      session && session.user?.role === "admin"
+      userRole === "admin"
         ? [
             { label: "Add Course", href: "/add-course" },
             { label: "Manage Courses", href: "/courses/manage" },
@@ -85,8 +84,7 @@ export default function Navbar() {
             const isActive = pathname === item.href;
             return (
               <li key={item.label}>
-                <Link
-                  as={NextLink}
+                <NextLink
                   href={item.href}
                   className={`text-sm font-medium transition-colors ${
                     isActive
@@ -95,13 +93,13 @@ export default function Navbar() {
                   }`}
                 >
                   {item.label}
-                </Link>
+                </NextLink>
               </li>
             );
           })}
         </ul>
 
-        {/* RIGHT: AUTH ACTIONS */}
+        {/* RIGHT: AUTH ACTIONS – নেটিভ HTML বাটন */}
         <div className="flex items-center gap-3">
           {isPending ? (
             <div className="w-8 h-8 rounded-full bg-slate-800 animate-pulse" />
@@ -123,34 +121,27 @@ export default function Navbar() {
                   {session.user.name}
                 </span>
               </div>
-              <Button
+              <button
                 onClick={handleSignOut}
-                variant="light"
-                radius="xl"
-                className="text-sm font-medium text-slate-300 hover:text-white transition-colors"
+                className="text-sm font-medium text-slate-300 hover:text-white transition-colors px-4 py-2 rounded-xl"
               >
                 Sign Out
-              </Button>
+              </button>
             </div>
           ) : (
             <>
-              <Button
+              <button
                 onClick={() => router.push("/login")}
-                variant="light"
-                radius="xl"
-                className="hidden sm:inline-flex text-sm font-medium text-slate-300 hover:text-white transition-colors"
+                className="hidden sm:inline-flex text-sm font-medium text-slate-300 hover:text-white transition-colors px-4 py-2 rounded-xl"
               >
                 Login
-              </Button>
-              <Button
+              </button>
+              <button
                 onClick={() => router.push("/register")}
-                color="primary"
-                variant="solid"
-                radius="xl"
-                className="text-sm font-semibold shadow-lg shadow-blue-500/30 bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-500 hover:to-indigo-500 text-white border-none transition-all"
+                className="text-sm font-semibold shadow-lg shadow-blue-500/30 bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-500 hover:to-indigo-500 text-white border-none transition-all px-6 py-2 rounded-xl"
               >
                 Register
-              </Button>
+              </button>
             </>
           )}
         </div>
@@ -164,8 +155,7 @@ export default function Navbar() {
               const isActive = pathname === item.href;
               return (
                 <li key={item.label}>
-                  <Link
-                    as={NextLink}
+                  <NextLink
                     href={item.href}
                     onClick={() => setIsMenuOpen(false)}
                     className={`block w-full py-2 text-base font-medium transition-colors ${
@@ -173,7 +163,7 @@ export default function Navbar() {
                     }`}
                   >
                     {item.label}
-                  </Link>
+                  </NextLink>
                 </li>
               );
             })}
@@ -196,37 +186,31 @@ export default function Navbar() {
                   )}
                   <span className="text-sm font-medium text-slate-200">{session.user.name}</span>
                 </div>
-                <Button
+                <button
                   onClick={handleSignOut}
-                  variant="flat"
-                  radius="xl"
-                  className="w-full font-medium text-slate-300 border border-slate-700/60 bg-slate-800/60 hover:bg-slate-700/60 transition-colors"
+                  className="w-full font-medium text-slate-300 border border-slate-700/60 bg-slate-800/60 hover:bg-slate-700/60 transition-colors px-4 py-2 rounded-xl"
                 >
                   Sign Out
-                </Button>
+                </button>
               </>
             ) : (
               <>
-                <Button
-                  as={NextLink}
-                  href="/login"
-                  variant="flat"
-                  radius="xl"
-                  className="w-full font-medium text-slate-300 border border-slate-700/60 bg-slate-800/60 hover:bg-slate-700/60 transition-colors"
-                  onClick={() => setIsMenuOpen(false)}
-                >
-                  Login
-                </Button>
-                <Button
-                  as={NextLink}
-                  href="/register"
-                  color="primary"
-                  radius="xl"
-                  className="w-full font-medium bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-500 hover:to-indigo-500 text-white border-none shadow-lg shadow-blue-500/30 transition-all"
-                  onClick={() => setIsMenuOpen(false)}
-                >
-                  Register
-                </Button>
+                <NextLink href="/login" passHref>
+                  <button
+                    className="w-full font-medium text-slate-300 border border-slate-700/60 bg-slate-800/60 hover:bg-slate-700/60 transition-colors px-4 py-2 rounded-xl"
+                    onClick={() => setIsMenuOpen(false)}
+                  >
+                    Login
+                  </button>
+                </NextLink>
+                <NextLink href="/register" passHref>
+                  <button
+                    className="w-full font-medium bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-500 hover:to-indigo-500 text-white border-none shadow-lg shadow-blue-500/30 transition-all px-4 py-2 rounded-xl"
+                    onClick={() => setIsMenuOpen(false)}
+                  >
+                    Register
+                  </button>
+                </NextLink>
               </>
             )}
           </div>

@@ -12,13 +12,11 @@ export default function ManageItemsPage() {
   const [items, setItems] = useState([]);
   const [loading, setLoading] = useState(true);
 
-  // 🎯 টোকেন ফেচ করার ফাংশন (Client Component পদ্ধতি)
+  // ✅ সঠিক টোকেন ফেচ পদ্ধতি (শুধু authClient.token())
   const fetchToken = async (): Promise<string | null> => {
     try {
       const { data: tokenData } = await authClient.token();
-      if (tokenData?.token) return tokenData.token;
-      const sessionData = await authClient.getSession();
-      return sessionData?.token || null;
+      return tokenData?.token || null;
     } catch (error) {
       console.error("Token fetch error:", error);
       return null;

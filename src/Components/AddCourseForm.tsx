@@ -13,7 +13,7 @@ import {
   FiZap
 } from "react-icons/fi";
 
-// 🎨 Zod Schema for Course Validation
+// 🎨 Zod Schema (default() সরানো হয়েছে)
 const courseSchema = z.object({
   title: z.string().min(5, { message: "Title must be at least 5 characters." }),
   instructor: z.string().min(3, { message: "Instructor name is required." }),
@@ -26,8 +26,8 @@ const courseSchema = z.object({
   duration: z.string().min(1, { message: "Duration is required." }),
   lessons: z.number().min(1, { message: "Number of lessons is required." }),
   language: z.string().min(1, { message: "Language is required." }),
-  certificate: z.boolean().default(false),
-  featured: z.boolean().default(false),
+  certificate: z.boolean(),   // ✅ default সরানো
+  featured: z.boolean(),      // ✅ default সরানো
 });
 
 type CourseFormValues = z.infer<typeof courseSchema>;
@@ -59,18 +59,11 @@ export default function AddCourseForm() {
   // ✅ Better Auth-এর useSession – শুধু data ও isPending (UI-র জন্য)
   const { data: session, isPending } = authClient.useSession();
 
-  // 🎯 টোকেন ফেচ করার ফাংশন (Client Component পদ্ধতি)
+  // 🎯 টোকেন ফেচ করার সঠিক পদ্ধতি (শুধু authClient.token())
   const fetchToken = async (): Promise<string | null> => {
     try {
-      // ১. authClient.token() চেষ্টা করুন (প্রথম পছন্দ)
       const { data: tokenData } = await authClient.token();
-      if (tokenData?.token) return tokenData.token;
-
-      // ২. যদি না হয়, getSession() থেকে টোকেন বের করার চেষ্টা
-      const sessionData = await authClient.getSession();
-      if (sessionData?.token) return sessionData.token;
-
-      return null;
+      return tokenData?.token || null;
     } catch (error) {
       console.error("Token fetch error:", error);
       return null;
@@ -111,7 +104,7 @@ export default function AddCourseForm() {
       language: "English",
       certificate: false,
       featured: false,
-    },
+    } as CourseFormValues,
   });
 
   const watchedImageUrl = watch("imageUrl");

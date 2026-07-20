@@ -19,43 +19,37 @@ export default function NotFound() {
 
         {/* Error Typography */}
         <div className="space-y-2">
-          <h1 className="text-7xl font-extrabold tracking-tight text-primary sm:text-8xl">
+          <h1 className="text-7xl font-extrabold tracking-tight text-blue-400 sm:text-8xl">
             404
           </h1>
-          <h2 className="text-2xl font-bold tracking-tight text-foreground sm:text-3xl mt-4">
+          <h2 className="text-2xl font-bold tracking-tight text-white sm:text-3xl mt-4">
             Page not found
           </h2>
-          <p className="mt-2 text-base text-foreground-500 leading-relaxed">
+          <p className="mt-2 text-base text-slate-400 leading-relaxed">
             Sorry, we couldn’t find the page you’re looking for. It might have been moved, deleted, or perhaps the URL contains a typo.
           </p>
         </div>
-        
 
         {/* Action Controls */}
         <div className="pt-6 flex flex-col sm:flex-row items-center justify-center gap-3">
-          {/* Go Back to Previous URL */}
+          {/* Go Back – রাউটার দিয়ে */}
           <Button
             onClick={() => router.back()}
-            variant="flat"
-            radius="xl"
-            startContent={<FiArrowLeft size={16} />}
-            className="w-full sm:w-auto font-medium text-foreground hover:bg-content2"
+            className="w-full sm:w-auto font-medium text-slate-300 border border-slate-700/60 hover:bg-slate-800/60 rounded-xl flex items-center gap-2"
           >
+            <FiArrowLeft size={16} />
             Go Back
           </Button>
 
-          {/* Go to Dashboard or Home */}
-          <Button
-            as={NextLink}
-            href="/"
-            color="primary"
-            variant="solid"
-            radius="xl"
-            startContent={<FiHome size={16} />}
-            className="w-full sm:w-auto font-semibold shadow-sm"
-          >
-            Back to Home
-          </Button>
+          {/* Go to Home – NextLink দিয়ে র‍্যাপ করা */}
+          <NextLink href="/" passHref>
+            <Button
+              className="w-full sm:w-auto font-semibold shadow-lg shadow-blue-500/30 bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-500 hover:to-indigo-500 text-white border-none transition-all rounded-xl flex items-center gap-2"
+            >
+              <FiHome size={16} />
+              Back to Home
+            </Button>
+          </NextLink>
         </div>
         
       </div>

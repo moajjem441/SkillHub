@@ -1,7 +1,7 @@
 "use client";
 
 import NextLink from "next/link";
-import { Link, Button } from "@heroui/react";
+import { Button } from "@heroui/react";
 import { FiBookOpen, FiArrowUp, FiMail, FiPhone, FiMapPin } from "react-icons/fi";
 import { FaGithub, FaLinkedin, FaTwitter, FaFacebook } from "react-icons/fa";
 import { authClient } from "@/lib/auth-client";
@@ -16,16 +16,15 @@ export default function Footer() {
 
   const { data: session } = authClient.useSession();
 
-  // 🔥 Role-based Quick Links (My Courses + Admin Links)
+  const userRole = (session?.user as any)?.role;
+
   const quickLinks = [
     { label: "Home", href: "/" },
     { label: "Explore Courses", href: "/courses" },
-    // 👇 শুধুমাত্র সাধারণ ইউজারদের জন্য My Courses
-    ...(session && session.user?.role !== "admin"
+    ...(session && userRole !== "admin"
       ? [{ label: "My Courses", href: "/my-courses" }]
       : []),
-    // 👇 শুধুমাত্র অ্যাডমিনদের জন্য
-    ...(session?.user?.role === "admin"
+    ...(userRole === "admin"
       ? [
           { label: "Add Course", href: "/add-course" },
           { label: "Manage Courses", href: "/courses/manage" },
@@ -59,16 +58,16 @@ export default function Footer() {
               Empowering developers and creators worldwide with top-tier, production-ready curriculum and interactive learning environments.
             </p>
             <div className="flex items-center gap-3 pt-2">
-              <Button isIconOnly variant="flat" radius="lg" size="sm" aria-label="Github" className="text-slate-400 hover:text-blue-400 transition-colors bg-transparent border border-slate-700/60 hover:border-blue-500/50">
+              <Button isIconOnly variant="ghost" size="sm" aria-label="Github" className="text-slate-400 hover:text-blue-400 transition-colors border border-slate-700/60 hover:border-blue-500/50 rounded-full">
                 <FaGithub size={16} />
               </Button>
-              <Button isIconOnly variant="flat" radius="lg" size="sm" aria-label="LinkedIn" className="text-slate-400 hover:text-blue-400 transition-colors bg-transparent border border-slate-700/60 hover:border-blue-500/50">
+              <Button isIconOnly variant="ghost" size="sm" aria-label="LinkedIn" className="text-slate-400 hover:text-blue-400 transition-colors border border-slate-700/60 hover:border-blue-500/50 rounded-full">
                 <FaLinkedin size={16} />
               </Button>
-              <Button isIconOnly variant="flat" radius="lg" size="sm" aria-label="Twitter" className="text-slate-400 hover:text-blue-400 transition-colors bg-transparent border border-slate-700/60 hover:border-blue-500/50">
+              <Button isIconOnly variant="ghost" size="sm" aria-label="Twitter" className="text-slate-400 hover:text-blue-400 transition-colors border border-slate-700/60 hover:border-blue-500/50 rounded-full">
                 <FaTwitter size={16} />
               </Button>
-              <Button isIconOnly variant="flat" radius="lg" size="sm" aria-label="Facebook" className="text-slate-400 hover:text-blue-400 transition-colors bg-transparent border border-slate-700/60 hover:border-blue-500/50">
+              <Button isIconOnly variant="ghost" size="sm" aria-label="Facebook" className="text-slate-400 hover:text-blue-400 transition-colors border border-slate-700/60 hover:border-blue-500/50 rounded-full">
                 <FaFacebook size={16} />
               </Button>
             </div>
@@ -80,9 +79,9 @@ export default function Footer() {
             <ul className="space-y-2.5">
               {quickLinks.map((item) => (
                 <li key={item.label}>
-                  <Link as={NextLink} href={item.href} className="text-sm text-slate-400 hover:text-blue-400 transition-colors">
+                  <NextLink href={item.href} className="text-sm text-slate-400 hover:text-blue-400 transition-colors">
                     {item.label}
-                  </Link>
+                  </NextLink>
                 </li>
               ))}
             </ul>
@@ -94,9 +93,9 @@ export default function Footer() {
             <ul className="space-y-2.5">
               {resources.map((item) => (
                 <li key={item.label}>
-                  <Link as={NextLink} href={item.href} className="text-sm text-slate-400 hover:text-blue-400 transition-colors">
+                  <NextLink href={item.href} className="text-sm text-slate-400 hover:text-blue-400 transition-colors">
                     {item.label}
-                  </Link>
+                  </NextLink>
                 </li>
               ))}
             </ul>
@@ -129,14 +128,14 @@ export default function Footer() {
           <p className="text-xs text-slate-500 text-center sm:text-left">
             &copy; {new Date().getFullYear()} SkillHub Inc. All rights reserved.
           </p>
+          {/* ✅ endContent সরানো, children-এ Flex ব্যবহার */}
           <Button
             onClick={scrollToTop}
-            variant="flat"
-            radius="xl"
+            variant="ghost"
             size="sm"
-            endContent={<FiArrowUp size={14} />}
-            className="text-xs font-medium text-slate-400 hover:text-blue-400 bg-slate-800/60 hover:bg-slate-700/60 border border-slate-700/60 transition-all"
+            className="text-xs font-medium text-slate-400 hover:text-blue-400 bg-slate-800/60 hover:bg-slate-700/60 border border-slate-700/60 transition-all rounded-xl flex items-center gap-1"
           >
+            <FiArrowUp size={14} />
             Back To Top
           </Button>
         </div>

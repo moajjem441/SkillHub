@@ -49,7 +49,7 @@ export default function FeaturedCourses() {
           : // ডাটা লোড হয়ে গেলে আসল কোর্স কার্ড দেখাবে
             courses.map((course) => (
               // 🛠️ এখানে courses.id এর বদলে course.id বা course._id (API অনুযায়ী) দেওয়া হয়েছে
-              <CourseCard key={course.id || course._id} course={course} />
+              <CourseCard key={course.id} course={course} />
             ))
         }
       </div>

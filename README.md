@@ -1,36 +1,152 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# 🎓 SkillHub – Production-Grade EdTech Platform
 
-## Getting Started
+[![Next.js](https://img.shields.io/badge/Next.js-16-black?style=flat&logo=next.js)](https://nextjs.org/)
+[![TypeScript](https://img.shields.io/badge/TypeScript-5.0-blue?style=flat&logo=typescript)](https://www.typescriptlang.org/)
+[![Tailwind CSS](https://img.shields.io/badge/Tailwind-3.0-38B2AC?style=flat&logo=tailwind-css)](https://tailwindcss.com/)
+[![MongoDB](https://img.shields.io/badge/MongoDB-6.0-47A248?style=flat&logo=mongodb)](https://www.mongodb.com/)
+[![Better Auth](https://img.shields.io/badge/Better_Auth-1.0-6C63FF?style=flat)](https://better-auth.com/)
+[![Stripe](https://img.shields.io/badge/Stripe-API-635BFF?style=flat&logo=stripe)](https://stripe.com/)
+[![Vercel](https://img.shields.io/badge/Vercel-Deployed-000000?style=flat&logo=vercel)](https://vercel.com/)
+[![Render](https://img.shields.io/badge/Render-Deployed-46E3B7?style=flat&logo=render)](https://render.com/)
+[![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
 
-First, run the development server:
+> **A full-stack learning platform with AI-powered content generation, personalized recommendations, and secure payment processing.**
 
-```bash
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
-```
+---
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+## 🚀 Live Demo
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+- **Frontend:** [https://skillhub-one-psi.vercel.app](https://skillhub-one-psi.vercel.app)
+- **Backend API:** [https://skillhub-server-1jvopf6e4-moajjems-projects.vercel.app](https://skillhub-server-1jvopf6e4-moajjems-projects.vercel.app)
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+> **Test Credentials:**
+> - Email: `test@example.com`
+> - Password: `password123`
 
-## Learn More
+---
 
-To learn more about Next.js, take a look at the following resources:
+## 📋 Table of Contents
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+- [Overview](#overview)
+- [Key Features](#key-features)
+- [Tech Stack](#tech-stack)
+- [Project Structure](#project-structure)
+- [Installation & Setup](#installation--setup)
+  - [Frontend Setup](#frontend-setup)
+  - [Backend Setup](#backend-setup)
+- [Environment Variables](#environment-variables)
+- [API Documentation](#api-documentation)
+- [Deployment](#deployment)
+- [Contributing](#contributing)
+- [License](#license)
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+---
 
-## Deploy on Vercel
+## 📖 Overview
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+**SkillHub** is a modern, production-ready EdTech platform designed to help developers and engineers master technical skills through structured, AI-enhanced courses. Built with Next.js 16, TypeScript, and MongoDB, it offers a seamless learning experience with personalized recommendations, AI-generated course content, and secure payment processing.
 
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+---
+
+## ✨ Key Features
+
+### 🔐 Authentication & Authorization
+- **Better Auth** integration with email/password login
+- **Role-based Access Control** (User / Admin)
+- **JWT Session Management** with secure cookie handling
+- **Protected Routes** – only authenticated users can access restricted pages
+
+### 🧠 AI-Powered Features
+- **AI Content Generator** – Create course descriptions, duration, lessons, and pricing automatically using Groq AI
+- **AI Smart Recommendation Engine** – Personalized course recommendations based on user viewing history and preferences
+
+### 📚 Course Management
+- **Course Catalog** – Filter, search, and sort courses by category, price, and rating
+- **Course Details** – Rich overview with gallery, curriculum, instructor info, and features
+- **Course Enrollment** – Secure enrollment via Stripe Checkout
+- **My Courses** – View all enrolled courses with progress status
+
+### 💳 Payment Integration
+- **Stripe Checkout** – Seamless payment processing
+- **Webhook Support** – Automatic enrollment upon successful payment
+- **Test Mode** – Use Stripe test cards for development
+
+### 🎨 Premium UI/UX
+- **Dark Glassmorphic Design** – Modern, premium dark theme with glass effects
+- **Fully Responsive** – Optimized for mobile, tablet, and desktop
+- **Interactive Animations** – Smooth transitions, hover effects, and micro-interactions
+- **Toast Notifications** – User-friendly feedback using `react-hot-toast`
+
+### 🛡️ Security
+- **Better Auth** with admin role
+- **JWT Token Verification** with `verifyToken` middleware
+- **CORS Configuration** for secure cross-origin requests
+- **Environment Variables** – All sensitive data stored securely
+
+---
+
+## 🛠️ Tech Stack
+
+### Frontend
+| Technology | Purpose |
+| :--- | :--- |
+| **Next.js 16** (App Router) | React framework with server components |
+| **TypeScript** | Type-safe development |
+| **Tailwind CSS** | Utility-first styling |
+| **HeroUI** | UI component library |
+| **Framer Motion** | Smooth animations |
+| **React Hook Form + Zod** | Form handling & validation |
+| **Better Auth** (Client) | Authentication & session management |
+| **Stripe JS** | Payment processing |
+| **React Hot Toast** | User notifications |
+
+### Backend
+| Technology | Purpose |
+| :--- | :--- |
+| **Express.js** | REST API framework |
+| **MongoDB** (Atlas) | NoSQL database |
+| **Mongoose / Native Driver** | Database connectivity |
+| **Better Auth** (Server) | Authentication & session handling |
+| **JWT** | Token-based authentication |
+| **Nodemailer** | Email sending (Contact Form) |
+| **Groq AI SDK** | AI content generation & recommendations |
+| **Stripe SDK** | Payment processing |
+
+---
+
+## 📁 Project Structure
+skillhub/
+├── app/ # Next.js App Router
+│ ├── (auth)/ # Auth pages (login, register)
+│ ├── (dashboard)/ # Protected pages (my-courses, dashboard)
+│ ├── admin/ # Admin pages (add-course, manage-courses)
+│ ├── api/ # API routes
+│ │ ├── ai/ # AI endpoints
+│ │ ├── auth/ # Better Auth endpoints
+│ │ ├── checkout_sessions/ # Stripe checkout
+│ │ 
+│ ├── courses/ # Course listing
+│ ├── courseDetails/ # Course details page
+│ └── ...
+├── components/ # Reusable React components
+│ ├── AddCourseForm.tsx
+│ ├── Navbar.tsx
+│ ├── Footer.tsx
+│ ├── CourseCard.tsx
+│ ├── ViewCourse.tsx
+│ └── ...
+├── lib/ # Utility functions & configurations
+│ ├── auth.ts # Better Auth config
+│ ├── auth-client.ts # Better Auth client
+│ ├── stripe.ts # Stripe config
+│ └── mongodb.ts # MongoDB connection
+├── public/ # Static assets
+├── styles/
+├── .env.local # Frontend environment variables
+├── package.json
+├── tsconfig.json
+├── tailwind.config.ts
+├── vercel.json # Vercel deployment config
+└── README.md
+
+
