@@ -150,3 +150,53 @@ skillhub/
 └── README.md
 
 
+
+---
+
+## 🚀 Installation & Setup
+
+### Prerequisites
+- Node.js (v18+)
+- MongoDB Atlas account
+- Stripe account (for payments)
+- Groq API key (for AI features)
+
+---
+
+### 🔧 Frontend Setup
+
+1. **Clone the repository:**
+   ```bash
+   git clone https://github.com/your-username/skillhub.git
+   cd skillhub
+
+2.Install dependencies:
+npm install
+
+3.Create .env.local file:
+# Better Auth
+BETTER_AUTH_SECRET=your_secret_key
+BETTER_AUTH_URL=http://localhost:3000
+
+# App URL
+NEXT_PUBLIC_APP_URL=http://localhost:3000
+
+# Backend API
+NEXT_PUBLIC_SERVER_URL=http://localhost:5000
+
+# Email (Contact Form)
+EMAIL_USER=your_email@gmail.com
+EMAIL_PASS=your_app_password
+
+# MongoDB
+MONGODB_URI=your_mongodb_connection_string
+
+# AI (Groq)
+GROQ_API_KEY=your_groq_api_key
+
+# Stripe
+NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY=your_stripe_publishable_key
+
+4.Run development server:
+npm run dev
+   ```
