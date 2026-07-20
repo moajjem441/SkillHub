@@ -207,7 +207,9 @@ GROQ_API_KEY=your_groq_api_key
 # Stripe
 NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY=your_stripe_publishable_key
 
-
+4.Run development server:
+npm run dev
+   
 
 ## 👨‍💻 Author
 
