@@ -1,5 +1,7 @@
 # 🎓 SkillHub – Production-Grade EdTech Platform
 
+> **Built with ❤️ by [Moajjem Hossain](https://github.com/moajjem)**
+
 [![Next.js](https://img.shields.io/badge/Next.js-16-black?style=flat&logo=next.js)](https://nextjs.org/)
 [![TypeScript](https://img.shields.io/badge/TypeScript-5.0-blue?style=flat&logo=typescript)](https://www.typescriptlang.org/)
 [![Tailwind CSS](https://img.shields.io/badge/Tailwind-3.0-38B2AC?style=flat&logo=tailwind-css)](https://tailwindcss.com/)
@@ -16,8 +18,10 @@
 
 ## 🚀 Live Demo
 
-- **Frontend:** [https://skillhub-one-psi.vercel.app](https://skillhub-one-psi.vercel.app)
-- **Backend API:** [https://skillhub-server-1jvopf6e4-moajjems-projects.vercel.app](https://skillhub-server-1jvopf6e4-moajjems-projects.vercel.app)
+## 🚀 Live Demo
+
+- **Frontend:** [https://skillhub-ivory.vercel.app](https://skillhub-ivory.vercel.app)
+- **Backend API:** [https://skillhub-server-beryl.vercel.app](https://skillhub-server-beryl.vercel.app)
 
 > **Test Credentials:**
 > - Email: `test@example.com`
@@ -44,7 +48,7 @@
 
 ## 📖 Overview
 
-**SkillHub** is a modern, production-ready EdTech platform designed to help developers and engineers master technical skills through structured, AI-enhanced courses. Built with Next.js 16, TypeScript, and MongoDB, it offers a seamless learning experience with personalized recommendations, AI-generated course content, and secure payment processing.
+**SkillHub** is a modern, production-ready EdTech platform designed and developed by **Moajjem Hossain** to help developers and engineers master technical skills through structured, AI-enhanced courses. Built with Next.js 16, TypeScript, and MongoDB, it offers a seamless learning experience with personalized recommendations, AI-generated course content, and secure payment processing.
 
 ---
 
@@ -70,6 +74,12 @@
 - **Stripe Checkout** – Seamless payment processing
 - **Webhook Support** – Automatic enrollment upon successful payment
 - **Test Mode** – Use Stripe test cards for development
+
+  ### 📧 Contact & Communication
+- **Contact Form** – Users can send messages directly to the admin via the `/contact` page
+- **Nodemailer Integration** – Sends emails using Gmail SMTP (or any SMTP provider)
+- **HTML Email Templates** – Beautifully formatted emails with user details (name, email, message)
+- **Toast Notifications** – Real-time feedback on form submission (success/error)
 
 ### 🎨 Premium UI/UX
 - **Dark Glassmorphic Design** – Modern, premium dark theme with glass effects
@@ -199,4 +209,37 @@ NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY=your_stripe_publishable_key
 
 4.Run development server:
 npm run dev
-   ```
+   
+
+## 👨‍💻 Author
+
+**Moajjem Hossain**
+- GitHub: [@moajjem](https://github.com/moajjem)
+- Email: moajjem441@gmail.com
+- LinkedIn: [Moajjem Hossain](https://linkedin.com/in/moajjem)
+
+---
+
+## 🙏 Acknowledgments
+
+- [Better Auth](https://better-auth.com/) – Authentication system
+- [Groq](https://groq.com/) – AI API for content generation & recommendations
+- [Stripe](https://stripe.com/) – Payment processing
+- [Nodemailer](https://nodemailer.com/) – Email sending
+- [HeroUI](https://heroui.com/) – UI components
+- [Unsplash](https://unsplash.com/) – Course images
+
+---
+
+## 📬 Contact
+
+For any questions, feedback, or collaboration opportunities, feel free to reach out:
+
+- **Email:** moajjem441@gmail.com
+- **GitHub:** [@moajjem](https://github.com/moajjem)
+
+---
+
+**Built with ❤️ by Moajjem Hossain | © 2026 SkillHub Inc. All rights reserved.**
+
+
