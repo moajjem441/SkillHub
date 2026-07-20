@@ -16,8 +16,10 @@
 
 ## 🚀 Live Demo
 
-- **Frontend:** [https://skillhub-one-psi.vercel.app](https://skillhub-one-psi.vercel.app)
-- **Backend API:** [https://skillhub-server-1jvopf6e4-moajjems-projects.vercel.app](https://skillhub-server-1jvopf6e4-moajjems-projects.vercel.app)
+## 🚀 Live Demo
+
+- **Frontend:** [https://skillhub-ivory.vercel.app](https://skillhub-ivory.vercel.app)
+- **Backend API:** [https://skillhub-server-beryl.vercel.app](https://skillhub-server-beryl.vercel.app)
 
 > **Test Credentials:**
 > - Email: `test@example.com`
