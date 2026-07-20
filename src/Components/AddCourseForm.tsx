@@ -10,7 +10,7 @@ import { authClient } from "@/lib/auth-client";
 import { 
   FiBook, FiUser, FiDollarSign, FiTag, FiAward, 
   FiClock, FiFileText, FiImage, FiUpload, FiX,
-  FiZap // ✅ সঠিক আইকন
+  FiZap
 } from "react-icons/fi";
 
 // 🎨 Zod Schema for Course Validation
@@ -56,23 +56,37 @@ export default function AddCourseForm() {
   const [isGenerating, setIsGenerating] = useState(false);
   const formRef = useRef<HTMLFormElement>(null);
 
-  // 🔐 Session check
+  // ✅ Better Auth-এর useSession – শুধু data ও isPending (UI-র জন্য)
+  const { data: session, isPending } = authClient.useSession();
+
+  // 🎯 টোকেন ফেচ করার ফাংশন (Client Component পদ্ধতি)
+  const fetchToken = async (): Promise<string | null> => {
+    try {
+      // ১. authClient.token() চেষ্টা করুন (প্রথম পছন্দ)
+      const { data: tokenData } = await authClient.token();
+      if (tokenData?.token) return tokenData.token;
+
+      // ২. যদি না হয়, getSession() থেকে টোকেন বের করার চেষ্টা
+      const sessionData = await authClient.getSession();
+      if (sessionData?.token) return sessionData.token;
+
+      return null;
+    } catch (error) {
+      console.error("Token fetch error:", error);
+      return null;
+    }
+  };
+
+  // 🔐 Session check – শুধু session দেখছি, token আলাদা
   useEffect(() => {
-    const checkAuth = async () => {
-      try {
-        const { data: session } = await authClient.getSession();
-        if (!session) {
-          router.push("/login");
-        } else {
-          setIsCheckingAuth(false);
-        }
-      } catch (error) {
-        console.error("Auth check error:", error);
+    if (!isPending) {
+      if (session) {
+        setIsCheckingAuth(false);
+      } else {
         router.push("/login");
       }
-    };
-    checkAuth();
-  }, [router]);
+    }
+  }, [session, isPending, router]);
 
   const {
     register,
@@ -80,7 +94,7 @@ export default function AddCourseForm() {
     formState: { errors },
     reset,
     watch,
-    setValue, // needed for AI generation
+    setValue,
   } = useForm<CourseFormValues>({
     resolver: zodResolver(courseSchema),
     defaultValues: {
@@ -103,69 +117,74 @@ export default function AddCourseForm() {
   const watchedImageUrl = watch("imageUrl");
 
   // ✨ AI Generate function
- const generateWithAI = async () => {
-  const title = watch("title");
-  const category = watch("category");
-  const level = watch("level");
+  const generateWithAI = async () => {
+    const title = watch("title");
+    const category = watch("category");
+    const level = watch("level");
 
-  if (!title) {
-    toast.error("Please enter a course title first.");
-    return;
-  }
-
-  setIsGenerating(true);
-  const loadingToast = toast.loading("AI is crafting your course content...", {
-    style: {
-      background: "rgba(15, 23, 42, 0.95)",
-      backdropFilter: "blur(12px)",
-      border: "1px solid rgba(59, 130, 246, 0.3)",
-      borderRadius: "12px",
-      color: "#f8fafc",
-    },
-  });
-
-  try {
-    const response = await fetch("/api/ai/generate-course", {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify({ title, category, level }),
-    });
-
-    const result = await response.json();
-
-    if (!response.ok) {
-      throw new Error(result.error || "Failed to generate");
+    if (!title) {
+      toast.error("Please enter a course title first.");
+      return;
     }
 
-    // 🔥 ফর্মের ফিল্ডগুলো পূরণ করুন (price যোগ)
-    setValue("description", result.data.description);
-    setValue("duration", result.data.duration);
-    setValue("lessons", result.data.lessons);
-    setValue("price", result.data.price); // 👈 নতুন যোগ
-
-    console.log("✅ Generated Features:", result.data.features);
-
-    toast.success("Course content generated successfully! 🎉", {
-      id: loadingToast,
-      duration: 3000,
+    setIsGenerating(true);
+    const loadingToast = toast.loading("AI is crafting your course content...", {
+      style: {
+        background: "rgba(15, 23, 42, 0.95)",
+        backdropFilter: "blur(12px)",
+        border: "1px solid rgba(59, 130, 246, 0.3)",
+        borderRadius: "12px",
+        color: "#f8fafc",
+      },
     });
-  } catch (error) {
-    console.error("AI Generation Error:", error);
-    toast.error(error instanceof Error ? error.message : "Failed to generate content. Please try again.", {
-      id: loadingToast,
-      duration: 4000,
-    });
-  } finally {
-    setIsGenerating(false);
-  }
-};
 
-  // 📤 Submit handler
+    try {
+      const response = await fetch("/api/ai/generate-course", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({ title, category, level }),
+      });
+
+      const result = await response.json();
+
+      if (!response.ok) {
+        throw new Error(result.error || "Failed to generate");
+      }
+
+      setValue("description", result.data.description);
+      setValue("duration", result.data.duration);
+      setValue("lessons", result.data.lessons);
+      setValue("price", result.data.price);
+
+      console.log("✅ Generated Features:", result.data.features);
+
+      toast.success("Course content generated successfully! 🎉", {
+        id: loadingToast,
+        duration: 3000,
+      });
+    } catch (error) {
+      console.error("AI Generation Error:", error);
+      toast.error(error instanceof Error ? error.message : "Failed to generate content. Please try again.", {
+        id: loadingToast,
+        duration: 4000,
+      });
+    } finally {
+      setIsGenerating(false);
+    }
+  };
+
+  // 📤 Submit handler – টোকেন ফেচ করে headers-এ যোগ
   const onSubmit = async (data: CourseFormValues) => {
-    setIsSubmitting(true);
+    // ✅ টোকেন ফেচ করুন
+    const token = await fetchToken();
+    if (!token) {
+      toast.error("Authentication token missing. Please login again.");
+      return;
+    }
 
+    setIsSubmitting(true);
     const loadingToast = toast.loading("Adding course...", {
       style: {
         background: "rgba(15, 23, 42, 0.95)",
@@ -181,6 +200,7 @@ export default function AddCourseForm() {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
+          Authorization: `Bearer ${token}`,
         },
         body: JSON.stringify(data),
       });
@@ -205,7 +225,6 @@ export default function AddCourseForm() {
 
     } catch (error) {
       console.error("Error adding course:", error);
-
       toast.error("Failed to add course. Please try again.", {
         id: loadingToast,
         duration: 5000,

@@ -12,6 +12,19 @@ export default function ManageItemsPage() {
   const [items, setItems] = useState([]);
   const [loading, setLoading] = useState(true);
 
+  // 🎯 টোকেন ফেচ করার ফাংশন (Client Component পদ্ধতি)
+  const fetchToken = async (): Promise<string | null> => {
+    try {
+      const { data: tokenData } = await authClient.token();
+      if (tokenData?.token) return tokenData.token;
+      const sessionData = await authClient.getSession();
+      return sessionData?.token || null;
+    } catch (error) {
+      console.error("Token fetch error:", error);
+      return null;
+    }
+  };
+
   // 🔐 Session check
   useEffect(() => {
     const checkAuth = async () => {
@@ -31,11 +44,23 @@ export default function ManageItemsPage() {
     checkAuth();
   }, [router]);
 
-  // 📦 Fetch items
+  // 📦 Fetch items (পাবলিক এন্ডপয়েন্ট, তবে টোকেন যোগ করা হলো)
   const fetchItems = async () => {
     try {
       setLoading(true);
-      const res = await fetch(`${process.env.NEXT_PUBLIC_SERVER_URL}/courses`);
+      const token = await fetchToken();
+      const headers: HeadersInit = {
+        "Content-Type": "application/json",
+      };
+      if (token) {
+        headers.Authorization = `Bearer ${token}`;
+      }
+      const res = await fetch(`${process.env.NEXT_PUBLIC_SERVER_URL}/courses`, {
+        headers,
+      });
+      if (!res.ok) {
+        throw new Error("Failed to fetch courses");
+      }
       const data = await res.json();
       setItems(data);
     } catch (error) {
@@ -46,12 +71,21 @@ export default function ManageItemsPage() {
     }
   };
 
-  // 🗑️ Delete handler – confirm() সরিয়ে ফেলা হয়েছে!
-  // ItemsTable-ই কনফার্মেশন দেখাবে, তাই এখানে শুধু ডিলিট API কল থাকবে।
+  // 🗑️ Delete handler – টোকেন সহ DELETE কল
   const handleDelete = async (id: string) => {
     try {
+      const token = await fetchToken();
+      if (!token) {
+        toast.error("Authentication token missing. Please login again.");
+        return;
+      }
+
       const res = await fetch(`${process.env.NEXT_PUBLIC_SERVER_URL}/admin/course/${id}`, {
         method: "DELETE",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${token}`,
+        },
       });
 
       if (!res.ok) throw new Error("Failed to delete");

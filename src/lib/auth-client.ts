@@ -1,11 +1,12 @@
-import { createAuthClient } from "better-auth/react"
-import { jwtClient } from "better-auth/client/plugins"
-export const authClient = createAuthClient({
-    /** The base URL of the server (optional if you're using the same domain) */
-    baseURL: process.env.BETTER_AUTH_URL,
-    plugins:[
-        jwtClient()
-    ]
-})
+// lib/auth-client.ts
+import { createAuthClient } from "better-auth/react";
+import { jwtClient } from "better-auth/client/plugins";
 
-export const { signIn, signUp, useSession } = createAuthClient()
+// ✅ একটি মাত্র ইনস্ট্যান্স
+export const authClient = createAuthClient({
+  baseURL: process.env.BETTER_AUTH_URL || "http://localhost:3000",
+  plugins: [jwtClient()],
+});
+
+// ✅ একই ইনস্ট্যান্স থেকে সবকিছু এক্সপোর্ট করুন
+export const { signIn, signUp, useSession } = authClient;
