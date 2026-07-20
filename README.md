@@ -56,6 +56,7 @@
 
 ### 🔐 Authentication & Authorization
 - **Better Auth** integration with email/password login
+- **Google OAuth** – Sign in / Sign up with Google account
 - **Role-based Access Control** (User / Admin)
 - **JWT Session Management** with secure cookie handling
 - **Protected Routes** – only authenticated users can access restricted pages
