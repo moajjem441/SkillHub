@@ -12,7 +12,7 @@ const db = client.db("skillhub");
 
 export const auth = betterAuth({
   // ✅ Better Auth-এর বেস URL (আপনার Next.js অ্যাপের URL)
-  url: process.env.BETTER_AUTH_URL || "http://localhost:3000",
+  url: process.env.BETTER_AUTH_URL,
 
   // ✅ সিক্রেট কী (এনভায়রনমেন্ট থেকে নিচ্ছি)
   secret: process.env.BETTER_AUTH_SECRET!,

@@ -7,8 +7,14 @@ const groq = new Groq({
 });
 
 export async function POST(request: NextRequest) {
+  // ✅ allCourses ও history বাইরে ডিক্লেয়ার করুন, যাতে catch-এ অ্যাক্সেস পাওয়া যায়
+  let allCourses: any[] = [];
+  let history: any[] = [];
+
   try {
-    const { history, allCourses } = await request.json();
+    const body = await request.json();
+    history = body.history || [];
+    allCourses = body.allCourses || [];
 
     if (!history || history.length === 0) {
       return NextResponse.json({
@@ -21,26 +27,38 @@ export async function POST(request: NextRequest) {
     // ইউজারের পছন্দের ক্যাটাগরি ও লেভেল বের করুন
     const categories = history.map((h: any) => h.category);
     const levels = history.map((h: any) => h.level);
-    const mostViewedCategory = categories.sort((a: string, b: string) =>
-      categories.filter((v: string) => v === a).length -
-      categories.filter((v: string) => v === b).length
-    ).pop();
+    const mostViewedCategory =
+      categories.sort(
+        (a: string, b: string) =>
+          categories.filter((v: string) => v === a).length -
+          categories.filter((v: string) => v === b).length
+      ).pop() || "Any";
 
-    const mostViewedLevel = levels.sort((a: string, b: string) =>
-      levels.filter((v: string) => v === a).length -
-      levels.filter((v: string) => v === b).length
-    ).pop();
+    const mostViewedLevel =
+      levels.sort(
+        (a: string, b: string) =>
+          levels.filter((v: string) => v === a).length -
+          levels.filter((v: string) => v === b).length
+      ).pop() || "Any";
 
-    // AI-কে প্রম্পট দিন
+    // AI প্রম্পট
     const prompt = `
       Based on the user's viewing history, suggest 3-4 courses they might like.
       
-      User's preferred category: "${mostViewedCategory || 'Any'}"
-      User's preferred level: "${mostViewedLevel || 'Any'}"
-      Recent courses viewed: ${history.slice(0, 5).map((h: any) => h.title).join(", ")}
+      User's preferred category: "${mostViewedCategory}"
+      User's preferred level: "${mostViewedLevel}"
+      Recent courses viewed: ${history
+        .slice(0, 5)
+        .map((h: any) => h.title)
+        .join(", ")}
 
       Available courses (choose from these only):
-      ${allCourses.map((c: any) => `- ${c.title} (${c.category}, ${c.level}, rating: ${c.rating})`).join("\n")}
+      ${allCourses
+        .map(
+          (c: any) =>
+            `- ${c.title} (${c.category}, ${c.level}, rating: ${c.rating})`
+        )
+        .join("\n")}
 
       Return ONLY a JSON array of course IDs (from the available courses) that best match the user's interests.
       Example: ["c-1", "c-3", "c-5"]
@@ -67,8 +85,8 @@ export async function POST(request: NextRequest) {
     return NextResponse.json({ success: true, data: recommendedCourses }, { status: 200 });
   } catch (error: any) {
     console.error("Recommendation API Error:", error);
-    // ব্যর্থ হলে র্যান্ডম ৩টি কোর্স সুপারিশ করুন
-    const fallback = allCourses.slice(0, 3);
+    // ✅ fallback হিসাবে allCourses-এর প্রথম ৩টি কোর্স দিন (যদি থাকে)
+    const fallback = allCourses.length > 0 ? allCourses.slice(0, 3) : [];
     return NextResponse.json({ success: true, data: fallback }, { status: 200 });
   }
 }

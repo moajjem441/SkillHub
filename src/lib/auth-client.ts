@@ -4,7 +4,7 @@ import { jwtClient } from "better-auth/client/plugins";
 
 // ✅ একটি মাত্র ইনস্ট্যান্স
 export const authClient = createAuthClient({
-  baseURL: process.env.BETTER_AUTH_URL || "http://localhost:3000",
+  baseURL: process.env.BETTER_AUTH_URL ,
   plugins: [jwtClient()],
 });
 
