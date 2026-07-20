@@ -242,6 +242,4 @@ For any questions, feedback, or collaboration opportunities, feel free to reach 
 
 **Built with ❤️ by Moajjem Hossain | © 2026 SkillHub Inc. All rights reserved.**
 
-4.Run development server:
-npm run dev
-   ```
+
