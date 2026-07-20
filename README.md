@@ -48,7 +48,7 @@
 
 ## 📖 Overview
 
-**SkillHub** is a modern, production-ready EdTech platform designed to help developers and engineers master technical skills through structured, AI-enhanced courses. Built with Next.js 16, TypeScript, and MongoDB, it offers a seamless learning experience with personalized recommendations, AI-generated course content, and secure payment processing.
+**SkillHub** is a modern, production-ready EdTech platform designed and developed by **Moajjem Hossain** to help developers and engineers master technical skills through structured, AI-enhanced courses. Built with Next.js 16, TypeScript, and MongoDB, it offers a seamless learning experience with personalized recommendations, AI-generated course content, and secure payment processing.
 
 ---
 
