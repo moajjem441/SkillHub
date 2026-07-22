@@ -116,12 +116,12 @@ export default function ManageItemsPage() {
             <h1 className="text-3xl font-black text-white">Manage Courses</h1>
             <p className="text-slate-400 text-sm mt-1">View and manage all courses</p>
           </div>
-          <button
+          {/* <button
             onClick={() => router.push("/admin/courses/add")}
             className="bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-500 hover:to-indigo-500 text-white font-bold px-6 py-2.5 rounded-xl shadow-lg shadow-blue-500/30 transition-all"
           >
             + Add New
-          </button>
+          </button> */}
         </div>
 
         {/* Table – ItemsTable ইতিমধ্যে Toast কনফার্মেশন দেখায় */}

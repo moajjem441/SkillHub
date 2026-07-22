@@ -13,7 +13,7 @@ import {
   FiZap
 } from "react-icons/fi";
 
-// 🎨 Zod Schema (default() সরানো হয়েছে)
+// 🎨 Zod Schema
 const courseSchema = z.object({
   title: z.string().min(5, { message: "Title must be at least 5 characters." }),
   instructor: z.string().min(3, { message: "Instructor name is required." }),
@@ -26,8 +26,8 @@ const courseSchema = z.object({
   duration: z.string().min(1, { message: "Duration is required." }),
   lessons: z.number().min(1, { message: "Number of lessons is required." }),
   language: z.string().min(1, { message: "Language is required." }),
-  certificate: z.boolean(),   // ✅ default সরানো
-  featured: z.boolean(),      // ✅ default সরানো
+  certificate: z.boolean(),
+  featured: z.boolean(),
 });
 
 type CourseFormValues = z.infer<typeof courseSchema>;
@@ -56,10 +56,8 @@ export default function AddCourseForm() {
   const [isGenerating, setIsGenerating] = useState(false);
   const formRef = useRef<HTMLFormElement>(null);
 
-  // ✅ Better Auth-এর useSession – শুধু data ও isPending (UI-র জন্য)
   const { data: session, isPending } = authClient.useSession();
 
-  // 🎯 টোকেন ফেচ করার সঠিক পদ্ধতি (শুধু authClient.token())
   const fetchToken = async (): Promise<string | null> => {
     try {
       const { data: tokenData } = await authClient.token();
@@ -70,7 +68,6 @@ export default function AddCourseForm() {
     }
   };
 
-  // 🔐 Session check – শুধু session দেখছি, token আলাদা
   useEffect(() => {
     if (!isPending) {
       if (session) {
@@ -109,7 +106,6 @@ export default function AddCourseForm() {
 
   const watchedImageUrl = watch("imageUrl");
 
-  // ✨ AI Generate function
   const generateWithAI = async () => {
     const title = watch("title");
     const category = watch("category");
@@ -168,9 +164,8 @@ export default function AddCourseForm() {
     }
   };
 
-  // 📤 Submit handler – টোকেন ফেচ করে headers-এ যোগ
+  // ✅ URL সরাসরি ব্যাকএন্ডের দিকে – Rewrites-এর ঝামেলা নেই
   const onSubmit = async (data: CourseFormValues) => {
-    // ✅ টোকেন ফেচ করুন
     const token = await fetchToken();
     if (!token) {
       toast.error("Authentication token missing. Please login again.");
@@ -189,6 +184,7 @@ export default function AddCourseForm() {
     });
 
     try {
+      // ✅ সরাসরি ব্যাকএন্ড URL (NEXT_PUBLIC_SERVER_URL ব্যবহার)
       const response = await fetch(`${process.env.NEXT_PUBLIC_SERVER_URL}/admin/course`, {
         method: "POST",
         headers: {
@@ -227,7 +223,6 @@ export default function AddCourseForm() {
     }
   };
 
-  // 🔄 Loading state
   if (isCheckingAuth) {
     return (
       <div className="min-h-screen w-full bg-slate-950 flex items-center justify-center">
@@ -268,7 +263,6 @@ export default function AddCourseForm() {
               <h2 className="text-sm font-bold uppercase tracking-wider text-blue-400">
                 Basic Information
               </h2>
-              {/* ✨ AI Generate Button */}
               <button
                 type="button"
                 onClick={generateWithAI}
@@ -288,7 +282,6 @@ export default function AddCourseForm() {
             </div>
             
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-              {/* Title */}
               <div className="space-y-1.5">
                 <label htmlFor="title" className={labelStyles}>Course Title</label>
                 <div className="relative group">
@@ -311,7 +304,6 @@ export default function AddCourseForm() {
                 )}
               </div>
 
-              {/* Instructor */}
               <div className="space-y-1.5">
                 <label htmlFor="instructor" className={labelStyles}>Instructor</label>
                 <div className="relative group">
@@ -336,7 +328,6 @@ export default function AddCourseForm() {
             </div>
 
             <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-              {/* Category */}
               <div className="space-y-1.5">
                 <label htmlFor="category" className={labelStyles}>Category</label>
                 <div className="relative group">
@@ -364,7 +355,6 @@ export default function AddCourseForm() {
                 )}
               </div>
 
-              {/* Level */}
               <div className="space-y-1.5">
                 <label htmlFor="level" className={labelStyles}>Level</label>
                 <div className="relative group">
@@ -389,7 +379,6 @@ export default function AddCourseForm() {
                 )}
               </div>
 
-              {/* Language */}
               <div className="space-y-1.5">
                 <label htmlFor="language" className={labelStyles}>Language</label>
                 <input
@@ -416,7 +405,6 @@ export default function AddCourseForm() {
             </h2>
             
             <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-              {/* Price */}
               <div className="space-y-1.5">
                 <label htmlFor="price" className={labelStyles}>Price ($)</label>
                 <div className="relative group">
@@ -440,7 +428,6 @@ export default function AddCourseForm() {
                 )}
               </div>
 
-              {/* Duration */}
               <div className="space-y-1.5">
                 <label htmlFor="duration" className={labelStyles}>Duration</label>
                 <div className="relative group">
@@ -463,7 +450,6 @@ export default function AddCourseForm() {
                 )}
               </div>
 
-              {/* Lessons */}
               <div className="space-y-1.5">
                 <label htmlFor="lessons" className={labelStyles}>Number of Lessons</label>
                 <div className="relative group">
@@ -488,7 +474,6 @@ export default function AddCourseForm() {
             </div>
 
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-              {/* Rating */}
               <div className="space-y-1.5">
                 <label htmlFor="rating" className={labelStyles}>Rating (0-5)</label>
                 <input
@@ -509,7 +494,6 @@ export default function AddCourseForm() {
                 )}
               </div>
 
-              {/* Image URL */}
               <div className="space-y-1.5">
                 <label htmlFor="imageUrl" className={labelStyles}>Image URL</label>
                 <div className="relative group">

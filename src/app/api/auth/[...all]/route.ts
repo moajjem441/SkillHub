@@ -1,4 +1,6 @@
-import { auth } from "@/lib/auth"; // path to your auth file
+import { auth } from "@/lib/auth";
 import { toNextJsHandler } from "better-auth/next-js";
 
-export const { POST, GET } = toNextJsHandler(auth);
+console.log("✅ Better Auth API route loaded!"); // 👈 এই লাইন যোগ করুন
+
+export const { GET, POST } = toNextJsHandler(auth);
